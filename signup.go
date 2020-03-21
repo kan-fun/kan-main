@@ -43,7 +43,7 @@ func signup(c *gin.Context) {
 	}
 
 	if channel_id != email {
-		c.String(403, "ChannelID not equal to email")
+		c.String(403, "ChannelID not equal to Email")
 		return
 	}
 
