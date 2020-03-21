@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"kan-core"
 	. "kan-server-core/model"
 )
 
@@ -43,7 +44,18 @@ func post(data url.Values, url string) *httptest.ResponseRecorder {
 }
 
 func createUser(email string, password string) *httptest.ResponseRecorder {
-	data := url.Values{"email": {email}, "password": {password}}
+	raw, _, err := generateCode(email)
+	if err != nil {
+		panic(err)
+	}
+
+	data := url.Values{
+		"email": {email},
+		"password": {password},
+		"code": {raw},
+		"code_hash": {sign.HashString(raw, secretKey_global)},
+		"channel_id": {email},
+	}
 
 	w := post(data, "/signup")
 
