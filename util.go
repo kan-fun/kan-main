@@ -18,8 +18,8 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"kan-core"
-	. "kan-server-core/model"
+	"github.com/kan-fun/kan-core"
+	. "github.com/kan-fun/kan-server-core/model"
 )
 
 func autoMigrate() {

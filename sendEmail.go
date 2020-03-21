@@ -7,7 +7,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	. "kan-server-core/model"
+	. "github.com/kan-fun/kan-server-core/model"
 )
 
 func sendEmail(c *gin.Context) {

@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	. "kan-server-core/model"
+	. "github.com/kan-fun/kan-server-core/model"
 )
 
 func login(c *gin.Context) {

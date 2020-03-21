@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"kan-core"
-	. "kan-server-core/model"
+	"github.com/kan-fun/kan-core"
+	. "github.com/kan-fun/kan-server-core/model"
 )
 
 func TestSendEmail(t *testing.T) {

@@ -8,8 +8,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"kan-core"
-	. "kan-server-core/model"
+	"github.com/kan-fun/kan-core"
+	. "github.com/kan-fun/kan-server-core/model"
 )
 
 var router *gin.Engine
