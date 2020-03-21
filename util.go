@@ -27,8 +27,14 @@ func autoMigrate() {
 	db.AutoMigrate(&ChannelEmail{})
 }
 
-type Claims struct {
-	value string `json:"value"`
+type CodeClaims struct {
+	codeHash string `json:"code_hash"`
+	channelID string `json:"channel_id"`
+	jwt.StandardClaims
+}
+
+type IDClaims struct {
+	id string `json:"id"`
 	jwt.StandardClaims
 }
 
@@ -76,7 +82,7 @@ func getPrivateKey(test bool) (*rsa.PrivateKey, error) {
 	}
 }
 
-func generateCode() (raw string, token string, err error) {
+func generateCode(channelID string) (raw string, token string, err error) {
 	ints := make([]string, 6)
 
 	for i := 0; i <= 5; i++ {
@@ -87,7 +93,7 @@ func generateCode() (raw string, token string, err error) {
 	raw = strings.Join(ints, "")
 	hash := sign.HashString(raw, secretKey_global)
 
-	token, err = generateToken(hash)
+	token, err = generateCodeToken(hash, channelID)
 	if err != nil {
 		return "", "", err
 	}
@@ -95,12 +101,32 @@ func generateCode() (raw string, token string, err error) {
 	return
 }
 
-func generateToken(value string) (tokenString string, err error) {
-	claims := Claims{
-		value,
+func generateIDToken(id string) (tokenString string, err error) {
+	claims := IDClaims{
+		id,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour).Unix(),
-			Issuer:    "progress.cool",
+			Issuer:    "kan-fun.com",
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+
+	tokenString, err = token.SignedString(privateKey_global)
+	if err != nil {
+		return "", err
+	}
+
+	return
+}
+
+func generateCodeToken(codeHash string, channelID string) (tokenString string, err error) {
+	claims := CodeClaims{
+		codeHash,
+		channelID,
+		jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Hour).Unix(),
+			Issuer:    "kan-fun.com",
 		},
 	}
 

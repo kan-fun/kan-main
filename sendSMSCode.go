@@ -13,7 +13,7 @@ func sendSMSCode(c *gin.Context) {
 		return
 	}
 
-	raw, token, err := generateCode()
+	raw, token, err := generateCode(number)
 	if err != nil {
 		c.String(403, "Fail to Generate Code")
 		return

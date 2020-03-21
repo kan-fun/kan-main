@@ -7,7 +7,7 @@ import (
 )
 
 func TestGenerateCode(t *testing.T) {
-	r, _, err := generateCode()
+	r, _, err := generateCode("main@kan.fun")
 	assert.Equal(t, nil, err)
 	assert.Equal(t, 6, len(r))
 }

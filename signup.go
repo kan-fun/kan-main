@@ -62,7 +62,7 @@ func signup(c *gin.Context) {
 		return
 	}
 
-	token, err := generateToken(fmt.Sprint(user.ID))
+	token, err := generateIDToken(fmt.Sprint(user.ID))
 	if err != nil {
 		log.Println(err)
 		c.String(403, "")
