@@ -139,5 +139,5 @@ func main() {
 	setup(false)
 	service_global = RealService{}
 	r := setupRouter()
-	r.Run()
+	r.Run(":8080")
 }
