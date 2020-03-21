@@ -50,10 +50,10 @@ func createUser(email string, password string) *httptest.ResponseRecorder {
 	}
 
 	data := url.Values{
-		"email": {email},
-		"password": {password},
-		"code": {raw},
-		"code_hash": {sign.HashString(raw, secretKey_global)},
+		"email":      {email},
+		"password":   {password},
+		"code":       {raw},
+		"code_hash":  {sign.HashString(raw, secretKey_global)},
 		"channel_id": {email},
 	}
 

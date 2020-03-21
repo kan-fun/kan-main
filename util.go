@@ -28,13 +28,13 @@ func autoMigrate() {
 }
 
 type CodeClaims struct {
-	codeHash string `json:"code_hash"`
-	channelID string `json:"channel_id"`
+	CodeHash  string `json:"code_hash"`
+	ChannelID string `json:"channel_id"`
 	jwt.StandardClaims
 }
 
 type IDClaims struct {
-	id string `json:"id"`
+	ID string `json:"id"`
 	jwt.StandardClaims
 }
 

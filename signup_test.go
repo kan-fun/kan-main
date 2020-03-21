@@ -23,10 +23,10 @@ func TestSignup(t *testing.T) {
 
 	// ✅ Success
 	data := url.Values{
-		"email": {email},
-		"password": {password},
-		"code": {code},
-		"code_hash": {sign.HashString(code, secretKey_global)},
+		"email":      {email},
+		"password":   {password},
+		"code":       {code},
+		"code_hash":  {sign.HashString(code, secretKey_global)},
 		"channel_id": {email},
 	}
 
@@ -41,9 +41,9 @@ func TestSignup(t *testing.T) {
 
 	// ❌ Failure for missing field
 	data = url.Values{
-		"email": {email},
-		"code": {code},
-		"code_hash": {sign.HashString(code, secretKey_global)},
+		"email":      {email},
+		"code":       {code},
+		"code_hash":  {sign.HashString(code, secretKey_global)},
 		"channel_id": {email},
 	}
 
@@ -55,10 +55,10 @@ func TestSignup(t *testing.T) {
 
 	// ❌ Failure for email not equal to channel_id
 	data = url.Values{
-		"email": {email},
-		"password": {password},
-		"code": {code},
-		"code_hash": {sign.HashString(code, secretKey_global)},
+		"email":      {email},
+		"password":   {password},
+		"code":       {code},
+		"code_hash":  {sign.HashString(code, secretKey_global)},
 		"channel_id": {"fake_email"},
 	}
 
@@ -70,10 +70,10 @@ func TestSignup(t *testing.T) {
 
 	// ❌ Failure for wrong code
 	data = url.Values{
-		"email": {email},
-		"password": {password},
-		"code": {"223567"},
-		"code_hash": {sign.HashString(code, secretKey_global)},
+		"email":      {email},
+		"password":   {password},
+		"code":       {"223567"},
+		"code_hash":  {sign.HashString(code, secretKey_global)},
 		"channel_id": {email},
 	}
 
