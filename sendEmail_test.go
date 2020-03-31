@@ -48,14 +48,10 @@ func TestSendEmail(t *testing.T) {
 
 	// ✅ Success
 	data := url.Values{
-		"access_key":      {accessKey},
-		"signature":       {signature},
-		"signature_nonce": {signatureNonce},
-		"timestamp":       {timestamp},
-		"topic":           {topic},
-		"msg":             {msg},
+		"topic": {topic},
+		"msg":   {msg},
 	}
-	w := post(data, "/send-email")
+	w := post("/send-email", data, &commonParameter, signature)
 	// ---
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, 2, len(w.Body.String()))
@@ -63,14 +59,11 @@ func TestSendEmail(t *testing.T) {
 
 	// ❌ Failure for Rewrite by Middle
 	data = url.Values{
-		"access_key":      {accessKey},
-		"signature":       {signature},
-		"signature_nonce": {signatureNonce},
-		"timestamp":       {timestamp},
-		"topic":           {"篡改 topic"},
-		"msg":             {msg},
+		"topic": {"篡改 topic"},
+		"msg":   {msg},
 	}
-	w = post(data, "/send-email")
+
+	w = post("/send-email", data, &commonParameter, signature)
 	// ---
 	assert.Equal(t, 403, w.Code)
 	assert.Equal(t, "Signature not Valid", w.Body.String())
@@ -78,12 +71,8 @@ func TestSendEmail(t *testing.T) {
 
 	// ❌ Failure for Count not Enough
 	data = url.Values{
-		"access_key":      {accessKey},
-		"signature":       {signature},
-		"signature_nonce": {signatureNonce},
-		"timestamp":       {timestamp},
-		"topic":           {topic},
-		"msg":             {msg},
+		"topic": {topic},
+		"msg":   {msg},
 	}
 
 	var cEmail ChannelEmail
@@ -92,7 +81,7 @@ func TestSendEmail(t *testing.T) {
 	cEmail.Count = 0
 	db.Save(&cEmail)
 
-	w = post(data, "/send-email")
+	w = post("/send-email", data, &commonParameter, signature)
 	// ---
 	assert.Equal(t, 403, w.Code)
 	assert.Equal(t, "Email Count not Enough", w.Body.String())
@@ -100,17 +89,13 @@ func TestSendEmail(t *testing.T) {
 
 	// ❌ Failure for No Topic
 	data = url.Values{
-		"access_key":      {accessKey},
-		"signature":       {signature},
-		"signature_nonce": {signatureNonce},
-		"timestamp":       {timestamp},
-		"msg":             {msg},
+		"msg": {msg},
 	}
 
 	cEmail.Count = 10
 	db.Save(&cEmail)
 
-	w = post(data, "/send-email")
+	w = post("/send-email", data, &commonParameter, signature)
 	// ---
 	assert.Equal(t, 403, w.Code)
 	assert.Equal(t, "No topic", w.Body.String())

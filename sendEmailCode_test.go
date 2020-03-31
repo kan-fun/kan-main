@@ -10,7 +10,7 @@ import (
 func TestSendEmailCode(t *testing.T) {
 	// ✅ Success
 	data := url.Values{"email": {"h.tsai@hotmail.com"}}
-	w := post(data, "/send-email-code")
+	w := post("/send-email-code", data, nil, "")
 
 	// ---
 	assert.Equal(t, 200, w.Code)
@@ -18,7 +18,7 @@ func TestSendEmailCode(t *testing.T) {
 
 	// ❌ Failure
 	data = url.Values{}
-	w = post(data, "/send-email-code")
+	w = post("/send-email-code", data, nil, "")
 
 	// ---
 	assert.Equal(t, 403, w.Code)

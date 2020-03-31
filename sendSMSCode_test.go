@@ -10,7 +10,7 @@ import (
 func TestSMSEmailCode(t *testing.T) {
 	// ✅ Success
 	data := url.Values{"number": {"17080056600"}}
-	w := post(data, "/send-sms-code")
+	w := post("/send-sms-code", data, nil, "")
 
 	// ---
 	assert.Equal(t, 200, w.Code)
@@ -18,7 +18,7 @@ func TestSMSEmailCode(t *testing.T) {
 
 	// ❌ Failure
 	data = url.Values{}
-	w = post(data, "/send-sms-code")
+	w = post("/send-sms-code", data, nil, "")
 
 	// ---
 	assert.Equal(t, 403, w.Code)

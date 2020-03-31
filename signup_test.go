@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/kan-fun/kan-core"
+	sign "github.com/kan-fun/kan-core"
 	. "github.com/kan-fun/kan-server-core/model"
 )
 
@@ -30,7 +30,7 @@ func TestSignup(t *testing.T) {
 		"channel_id": {email},
 	}
 
-	w := post(data, "/signup")
+	w := post("/signup", data, nil, "")
 	// ---
 	assert.Equal(t, 200, w.Code)
 	var user User
@@ -47,7 +47,7 @@ func TestSignup(t *testing.T) {
 		"channel_id": {email},
 	}
 
-	w = post(data, "/signup")
+	w = post("/signup", data, nil, "")
 	// ---
 	assert.Equal(t, 403, w.Code)
 	assert.Equal(t, "No Password", w.Body.String())
@@ -62,7 +62,7 @@ func TestSignup(t *testing.T) {
 		"channel_id": {"fake_email"},
 	}
 
-	w = post(data, "/signup")
+	w = post("/signup", data, nil, "")
 	// ---
 	assert.Equal(t, 403, w.Code)
 	assert.Equal(t, "ChannelID not equal to Email", w.Body.String())
@@ -77,7 +77,7 @@ func TestSignup(t *testing.T) {
 		"channel_id": {email},
 	}
 
-	w = post(data, "/signup")
+	w = post("/signup", data, nil, "")
 	// ---
 	assert.Equal(t, 403, w.Code)
 	assert.Equal(t, "Code is wrong", w.Body.String())

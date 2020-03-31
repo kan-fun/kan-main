@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/kan-fun/kan-core"
+	sign "github.com/kan-fun/kan-core"
 	. "github.com/kan-fun/kan-server-core/model"
 )
 
@@ -30,11 +30,19 @@ func dropAndMigrate() {
 	autoMigrate()
 }
 
-func post(data url.Values, url string) *httptest.ResponseRecorder {
+func post(url string, data url.Values, commonParameter *sign.CommonParameter, signature string) *httptest.ResponseRecorder {
 	body := strings.NewReader(data.Encode())
 
 	req, _ := http.NewRequest("POST", url, body)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	if commonParameter != nil {
+		req.Header.Set("X-Ca-Key", commonParameter.AccessKey)
+		req.Header.Set("X-Ca-Timestamp", commonParameter.Timestamp)
+		req.Header.Set("X-Ca-Nonce", commonParameter.SignatureNonce)
+
+		req.Header.Set("X-Ca-Signature", signature)
+	}
 
 	w := httptest.NewRecorder()
 
@@ -57,7 +65,7 @@ func createUser(email string, password string) *httptest.ResponseRecorder {
 		"channel_id": {email},
 	}
 
-	w := post(data, "/signup")
+	w := post("/signup", data, nil, "")
 
 	if w.Code != 200 {
 		panic("createUser Fail")

@@ -146,23 +146,23 @@ func hashPassword(password string) string {
 }
 
 func checkSignature(c *gin.Context, specificParameter map[string]string) (*User, error) {
-	accessKey, ok := c.GetPostForm("access_key")
-	if !ok {
+	accessKey := c.GetHeader("X-Ca-Key")
+	if accessKey == "" {
 		return nil, errors.New("No AccessKey")
 	}
 
-	signature, ok := c.GetPostForm("signature")
-	if !ok {
+	signature := c.GetHeader("X-Ca-Signature")
+	if signature == "" {
 		return nil, errors.New("No Signature")
 	}
 
-	signatureNonce, ok := c.GetPostForm("signature_nonce")
-	if !ok {
+	signatureNonce := c.GetHeader("X-Ca-Nonce")
+	if signatureNonce == "" {
 		return nil, errors.New("No SignatureNonce")
 	}
 
-	timestamp, ok := c.GetPostForm("timestamp")
-	if !ok {
+	timestamp := c.GetHeader("X-Ca-Timestamp")
+	if timestamp == "" {
 		return nil, errors.New("No Timestamp")
 	}
 

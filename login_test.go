@@ -18,7 +18,7 @@ func TestLogin(t *testing.T) {
 	// ✅ Success
 	data := url.Values{"email": {email}, "password": {password}}
 
-	w := post(data, "/login")
+	w := post("/login", data, nil, "")
 
 	// ---
 	assert.Equal(t, 200, w.Code)
@@ -27,7 +27,7 @@ func TestLogin(t *testing.T) {
 	// ❌ Failure
 	data = url.Values{"email": {email}, "password": {"badpw"}}
 
-	w = post(data, "/login")
+	w = post("/login", data, nil, "")
 	// ---
 	assert.Equal(t, 403, w.Code)
 	assert.Equal(t, 0, len(w.Body.String()))
