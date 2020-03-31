@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/kan-fun/kan-core"
+	sign "github.com/kan-fun/kan-core"
 	. "github.com/kan-fun/kan-server-core/model"
 )
 
@@ -28,9 +28,9 @@ func TestSendEmail(t *testing.T) {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
 	commonParameter := sign.CommonParameter{
-		accessKey,
-		signatureNonce,
-		timestamp,
+		AccessKey:      accessKey,
+		SignatureNonce: signatureNonce,
+		Timestamp:      timestamp,
 	}
 
 	msg := "msg"

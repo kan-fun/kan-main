@@ -18,7 +18,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/kan-fun/kan-core"
+	sign "github.com/kan-fun/kan-core"
 	. "github.com/kan-fun/kan-server-core/model"
 )
 
@@ -63,10 +63,10 @@ func getPrivateKey(test bool) (*rsa.PrivateKey, error) {
 		}
 
 		resp, err := http.Get(url)
-		defer resp.Body.Close()
 		if err != nil {
 			return nil, err
 		}
+		defer resp.Body.Close()
 
 		bytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
@@ -167,9 +167,9 @@ func checkSignature(c *gin.Context, specificParameter map[string]string) (*User,
 	}
 
 	commonParameter := sign.CommonParameter{
-		accessKey,
-		signatureNonce,
-		timestamp,
+		AccessKey:      accessKey,
+		SignatureNonce: signatureNonce,
+		Timestamp:      timestamp,
 	}
 
 	var user User
