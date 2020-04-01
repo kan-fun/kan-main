@@ -23,12 +23,17 @@ func (s realService) email(address string, subject string, body string) error {
 	request.Version = "2015-11-23"
 	request.ApiName = "SingleSendMail"
 
-	request.QueryParams["AccountName"] = "no-reply@mail.progress.cool"
+	request.QueryParams["AccountName"] = "no-reply@mail.kan-fun.com"
 	request.QueryParams["AddressType"] = "1"
 	request.QueryParams["ReplyToAddress"] = "false"
 	request.QueryParams["ToAddress"] = address
 	request.QueryParams["Subject"] = subject
-	request.QueryParams["TextBody"] = body
+
+	if body == "" {
+		request.QueryParams["HtmlBody"] = "<html></html>"
+	} else {
+		request.QueryParams["TextBody"] = body
+	}
 
 	_, err := clientGlobal.ProcessCommonRequest(request)
 	if err != nil {

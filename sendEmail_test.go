@@ -33,7 +33,7 @@ func TestSendEmail(t *testing.T) {
 		Timestamp:      timestamp,
 	}
 
-	msg := "msg"
+	msg := ""
 	topic := "X模型"
 
 	specificParameter := make(map[string]string)
