@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	sign "github.com/kan-fun/kan-core"
-	. "github.com/kan-fun/kan-server-core/model"
+	"github.com/kan-fun/kan-server-core/model"
 )
 
 var router *gin.Engine
@@ -17,12 +17,12 @@ var router *gin.Engine
 func init() {
 	setup(true)
 	router = setupRouter()
-	service_global = MockService{}
+	serviceGlobal = mockService{}
 }
 
 func dropDB() {
-	db.DropTable(&User{})
-	db.DropTable(&ChannelEmail{})
+	db.DropTable(&model.User{})
+	db.DropTable(&model.ChannelEmail{})
 }
 
 func dropAndMigrate() {
@@ -61,7 +61,7 @@ func createUser(email string, password string) *httptest.ResponseRecorder {
 		"email":      {email},
 		"password":   {password},
 		"code":       {raw},
-		"code_hash":  {sign.HashString(raw, secretKey_global)},
+		"code_hash":  {sign.HashString(raw, secretKeyGlobal)},
 		"channel_id": {email},
 	}
 

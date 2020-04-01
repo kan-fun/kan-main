@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	mrand "math/rand"
+	"math/rand"
 	"os"
 	"time"
 
@@ -15,18 +15,18 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-var aliyunRegionId string
+var aliyunRegionID string
 var aliyunAccessKey string
 var aliyunSecretKey string
 var secretKeyStr string
 
 var db *gorm.DB
 
-var client_global *sdk.Client
-var service_global Service
+var clientGlobal *sdk.Client
+var serviceGlobal service
 
-var privateKey_global *rsa.PrivateKey
-var secretKey_global []byte
+var privateKeyGlobal *rsa.PrivateKey
+var secretKeyGlobal []byte
 
 func connectDB(test bool) (db *gorm.DB, err error) {
 	if test {
@@ -61,64 +61,64 @@ func connectDB(test bool) (db *gorm.DB, err error) {
 
 func setup(test bool) {
 	if !test {
-		aliyunRegionId_local, ok := os.LookupEnv("KAN_ALIYUN_REGION_ID")
+		aliyunRegionIDLocal, ok := os.LookupEnv("KAN_ALIYUN_REGION_ID")
 		if !ok {
 			panic("KAN_ALIYUN_REGION_ID not set")
 		}
-		aliyunRegionId = aliyunRegionId_local
+		aliyunRegionID = aliyunRegionIDLocal
 
-		aliyunAccessKey_local, ok := os.LookupEnv("KAN_ALIYUN_ACCESS_KEY")
+		aliyunAccessKeyLocal, ok := os.LookupEnv("KAN_ALIYUN_ACCESS_KEY")
 		if !ok {
 			panic("KAN_ALIYUN_ACCESS_KEY not set")
 		}
-		aliyunAccessKey = aliyunAccessKey_local
+		aliyunAccessKey = aliyunAccessKeyLocal
 
-		aliyunSecretKey_local, ok := os.LookupEnv("KAN_ALIYUN_SECRET_KEY")
+		aliyunSecretKeyLocal, ok := os.LookupEnv("KAN_ALIYUN_SECRET_KEY")
 		if !ok {
 			panic("KAN_ALIYUN_SECRET_KEY not set")
 		}
-		aliyunSecretKey = aliyunSecretKey_local
+		aliyunSecretKey = aliyunSecretKeyLocal
 
-		secretKeyStr_local, ok := os.LookupEnv("KAN_SECRET_KEY_STR")
+		secretKeyStrLocal, ok := os.LookupEnv("KAN_SECRET_KEY_STR")
 		if !ok {
 			panic("KAN_SECRET_KEY_STR not set")
 		}
-		secretKeyStr = secretKeyStr_local
+		secretKeyStr = secretKeyStrLocal
 	}
 
-	mrand.Seed(time.Now().UnixNano())
+	rand.Seed(time.Now().UnixNano())
 
 	// Set Private Key
-	privateKey_local, err := getPrivateKey(test)
+	privateKeyLocal, err := getPrivateKey(test)
 	if err != nil {
 		panic(err)
 	}
 
-	privateKey_global = privateKey_local
+	privateKeyGlobal = privateKeyLocal
 
-	secretKey_local, err := base64.URLEncoding.DecodeString(secretKeyStr)
+	secretKeyLocal, err := base64.URLEncoding.DecodeString(secretKeyStr)
 	if err != nil {
 		panic(err)
 	}
 
-	secretKey_global = secretKey_local
+	secretKeyGlobal = secretKeyLocal
 
 	// Connect DB
-	db_local, err := connectDB(test)
+	dbLocal, err := connectDB(test)
 	if err != nil {
 		panic(err)
 	}
 
-	db = db_local
+	db = dbLocal
 	autoMigrate()
 
 	// Init Aliyun Client
-	client_local, err := sdk.NewClientWithAccessKey(aliyunRegionId, aliyunAccessKey, aliyunSecretKey)
+	clientLocal, err := sdk.NewClientWithAccessKey(aliyunRegionID, aliyunAccessKey, aliyunSecretKey)
 	if err != nil {
 		panic(err)
 	}
 
-	client_global = client_local
+	clientGlobal = clientLocal
 }
 
 func setupRouter() *gin.Engine {
@@ -137,7 +137,7 @@ func setupRouter() *gin.Engine {
 
 func main() {
 	setup(false)
-	service_global = RealService{}
+	serviceGlobal = realService{}
 	r := setupRouter()
 	r.Run(":8080")
 }

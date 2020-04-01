@@ -19,7 +19,7 @@ func sendEmailCode(c *gin.Context) {
 		return
 	}
 
-	err = service_global.email(email, "验证码", raw)
+	err = serviceGlobal.email(email, "验证码", raw)
 	if err != nil {
 		log.Println(err)
 		c.String(403, "Fail to Send Email Code")

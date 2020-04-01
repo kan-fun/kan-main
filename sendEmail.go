@@ -7,7 +7,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	. "github.com/kan-fun/kan-server-core/model"
+	"github.com/kan-fun/kan-server-core/model"
 )
 
 func sendEmail(c *gin.Context) {
@@ -34,7 +34,7 @@ func sendEmail(c *gin.Context) {
 		return
 	}
 
-	var cEmail ChannelEmail
+	var cEmail model.ChannelEmail
 	query := db.Model(&user).Related(&cEmail)
 	if err := query.Error; err != nil {
 		c.String(403, "Doesn't Find Email Belong to the User")
@@ -47,7 +47,7 @@ func sendEmail(c *gin.Context) {
 		return
 	}
 
-	err = service_global.email(cEmail.Address, topic, msg)
+	err = serviceGlobal.email(cEmail.Address, topic, msg)
 	if err != nil {
 		log.Println(err)
 		c.String(403, "Fail to Send Email")

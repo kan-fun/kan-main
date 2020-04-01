@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	. "github.com/kan-fun/kan-server-core/model"
+	"github.com/kan-fun/kan-server-core/model"
 )
 
 func viewKey(c *gin.Context) {
@@ -14,7 +14,7 @@ func viewKey(c *gin.Context) {
 		return
 	}
 
-	var user User
+	var user model.User
 	db.Select("id, access_key, secret_key").Where("id = ?", id).First(&user)
 	if user.ID == 0 {
 		c.String(403, "Not Found User")

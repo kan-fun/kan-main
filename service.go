@@ -6,18 +6,18 @@ import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 )
 
-type Service interface {
+type service interface {
 	email(address string, subject string, body string) error
 	sms(number string, code string) error
 }
 
-type RealService struct {
+type realService struct {
 }
 
-type MockService struct {
+type mockService struct {
 }
 
-func (s RealService) email(address string, subject string, body string) error {
+func (s realService) email(address string, subject string, body string) error {
 	request := requests.NewCommonRequest()
 	request.Domain = "dm.aliyuncs.com"
 	request.Version = "2015-11-23"
@@ -28,9 +28,9 @@ func (s RealService) email(address string, subject string, body string) error {
 	request.QueryParams["ReplyToAddress"] = "false"
 	request.QueryParams["ToAddress"] = address
 	request.QueryParams["Subject"] = subject
-	request.QueryParams["HtmlBody"] = body
+	request.QueryParams["TextBody"] = body
 
-	_, err := client_global.ProcessCommonRequest(request)
+	_, err := clientGlobal.ProcessCommonRequest(request)
 	if err != nil {
 		return err
 	}
@@ -38,11 +38,11 @@ func (s RealService) email(address string, subject string, body string) error {
 	return nil
 }
 
-func (s MockService) email(address string, subject string, body string) error {
+func (s mockService) email(address string, subject string, body string) error {
 	return nil
 }
 
-func (s RealService) sms(number string, code string) error {
+func (s realService) sms(number string, code string) error {
 	request := requests.NewCommonRequest()
 	request.Domain = "dysmsapi.aliyuncs.com"
 	request.Version = "2017-05-25"
@@ -53,7 +53,7 @@ func (s RealService) sms(number string, code string) error {
 	request.QueryParams["TemplateCode"] = "SMS_185811363"
 	request.QueryParams["TemplateParam"] = fmt.Sprintf("{\"code\":\"%s\"}", code)
 
-	_, err := client_global.ProcessCommonRequest(request)
+	_, err := clientGlobal.ProcessCommonRequest(request)
 	if err != nil {
 		return err
 	}
@@ -61,6 +61,6 @@ func (s RealService) sms(number string, code string) error {
 	return nil
 }
 
-func (s MockService) sms(number string, code string) error {
+func (s mockService) sms(number string, code string) error {
 	return nil
 }

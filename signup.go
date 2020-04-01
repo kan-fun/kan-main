@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	"github.com/kan-fun/kan-core"
-	. "github.com/kan-fun/kan-server-core/model"
+	sign "github.com/kan-fun/kan-core"
+	"github.com/kan-fun/kan-server-core/model"
 )
 
 func signup(c *gin.Context) {
@@ -30,26 +30,26 @@ func signup(c *gin.Context) {
 		return
 	}
 
-	code_hash, ok := c.GetPostForm("code_hash")
+	codeHash, ok := c.GetPostForm("code_hash")
 	if !ok {
 		c.String(403, "No Password")
 		return
 	}
 
-	channel_id, ok := c.GetPostForm("channel_id")
+	channelID, ok := c.GetPostForm("channel_id")
 	if !ok {
 		c.String(403, "No ChannelID")
 		return
 	}
 
-	if channel_id != email {
+	if channelID != email {
 		c.String(403, "ChannelID not equal to Email")
 		return
 	}
 
-	expected_code_hash := sign.HashString(code, secretKey_global)
+	expectedCodeHash := sign.HashString(code, secretKeyGlobal)
 
-	if expected_code_hash != code_hash {
+	if expectedCodeHash != codeHash {
 		c.String(403, "Code is wrong")
 		return
 	}
@@ -68,7 +68,7 @@ func signup(c *gin.Context) {
 		return
 	}
 
-	user := &User{
+	user := &model.User{
 		Email:     email,
 		Password:  hashPassword(password),
 		AccessKey: accessKey,
@@ -81,7 +81,7 @@ func signup(c *gin.Context) {
 		return
 	}
 
-	cEmail := &ChannelEmail{
+	cEmail := &model.ChannelEmail{
 		UserID:  user.ID,
 		Address: email,
 		Count:   100,

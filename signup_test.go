@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	sign "github.com/kan-fun/kan-core"
-	. "github.com/kan-fun/kan-server-core/model"
+	"github.com/kan-fun/kan-server-core/model"
 )
 
 func TestSignup(t *testing.T) {
@@ -26,14 +26,14 @@ func TestSignup(t *testing.T) {
 		"email":      {email},
 		"password":   {password},
 		"code":       {code},
-		"code_hash":  {sign.HashString(code, secretKey_global)},
+		"code_hash":  {sign.HashString(code, secretKeyGlobal)},
 		"channel_id": {email},
 	}
 
 	w := post("/signup", data, nil, "")
 	// ---
 	assert.Equal(t, 200, w.Code)
-	var user User
+	var user model.User
 	db.Take(&user)
 	assert.Equal(t, email, user.Email)
 	assert.Equal(t, hashPassword(password), user.Password)
@@ -43,7 +43,7 @@ func TestSignup(t *testing.T) {
 	data = url.Values{
 		"email":      {email},
 		"code":       {code},
-		"code_hash":  {sign.HashString(code, secretKey_global)},
+		"code_hash":  {sign.HashString(code, secretKeyGlobal)},
 		"channel_id": {email},
 	}
 
@@ -58,7 +58,7 @@ func TestSignup(t *testing.T) {
 		"email":      {email},
 		"password":   {password},
 		"code":       {code},
-		"code_hash":  {sign.HashString(code, secretKey_global)},
+		"code_hash":  {sign.HashString(code, secretKeyGlobal)},
 		"channel_id": {"fake_email"},
 	}
 
@@ -73,7 +73,7 @@ func TestSignup(t *testing.T) {
 		"email":      {email},
 		"password":   {password},
 		"code":       {"223567"},
-		"code_hash":  {sign.HashString(code, secretKey_global)},
+		"code_hash":  {sign.HashString(code, secretKeyGlobal)},
 		"channel_id": {email},
 	}
 

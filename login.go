@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	. "github.com/kan-fun/kan-server-core/model"
+	"github.com/kan-fun/kan-server-core/model"
 )
 
 func login(c *gin.Context) {
@@ -23,7 +23,7 @@ func login(c *gin.Context) {
 		return
 	}
 
-	var user User
+	var user model.User
 	db.Select("id").Where("email = ? AND password = ?", email, hashPassword(password)).First(&user)
 
 	if user.ID == 0 {

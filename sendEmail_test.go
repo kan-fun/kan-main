@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	sign "github.com/kan-fun/kan-core"
-	. "github.com/kan-fun/kan-server-core/model"
+	"github.com/kan-fun/kan-server-core/model"
 )
 
 func TestSendEmail(t *testing.T) {
@@ -20,7 +20,7 @@ func TestSendEmail(t *testing.T) {
 
 	createUser(email, password)
 
-	var user User
+	var user model.User
 	db.Select("id, access_key, secret_key").Where("email = ?", email).First(&user)
 
 	accessKey := user.AccessKey
@@ -75,7 +75,7 @@ func TestSendEmail(t *testing.T) {
 		"msg":   {msg},
 	}
 
-	var cEmail ChannelEmail
+	var cEmail model.ChannelEmail
 	db.Model(&user).Related(&cEmail)
 
 	cEmail.Count = 0

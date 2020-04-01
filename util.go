@@ -19,21 +19,21 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	sign "github.com/kan-fun/kan-core"
-	. "github.com/kan-fun/kan-server-core/model"
+	"github.com/kan-fun/kan-server-core/model"
 )
 
 func autoMigrate() {
-	db.AutoMigrate(&User{})
-	db.AutoMigrate(&ChannelEmail{})
+	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.ChannelEmail{})
 }
 
-type CodeClaims struct {
+type codeClaims struct {
 	CodeHash  string `json:"code_hash"`
 	ChannelID string `json:"channel_id"`
 	jwt.StandardClaims
 }
 
-type IDClaims struct {
+type idClaims struct {
 	ID string `json:"id"`
 	jwt.StandardClaims
 }
@@ -91,7 +91,7 @@ func generateCode(channelID string) (raw string, token string, err error) {
 	}
 
 	raw = strings.Join(ints, "")
-	hash := sign.HashString(raw, secretKey_global)
+	hash := sign.HashString(raw, secretKeyGlobal)
 
 	token, err = generateCodeToken(hash, channelID)
 	if err != nil {
@@ -102,7 +102,7 @@ func generateCode(channelID string) (raw string, token string, err error) {
 }
 
 func generateIDToken(id string) (tokenString string, err error) {
-	claims := IDClaims{
+	claims := idClaims{
 		id,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour).Unix(),
@@ -112,7 +112,7 @@ func generateIDToken(id string) (tokenString string, err error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 
-	tokenString, err = token.SignedString(privateKey_global)
+	tokenString, err = token.SignedString(privateKeyGlobal)
 	if err != nil {
 		return "", err
 	}
@@ -121,7 +121,7 @@ func generateIDToken(id string) (tokenString string, err error) {
 }
 
 func generateCodeToken(codeHash string, channelID string) (tokenString string, err error) {
-	claims := CodeClaims{
+	claims := codeClaims{
 		codeHash,
 		channelID,
 		jwt.StandardClaims{
@@ -132,7 +132,7 @@ func generateCodeToken(codeHash string, channelID string) (tokenString string, e
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 
-	tokenString, err = token.SignedString(privateKey_global)
+	tokenString, err = token.SignedString(privateKeyGlobal)
 	if err != nil {
 		return "", err
 	}
@@ -145,7 +145,7 @@ func hashPassword(password string) string {
 	return fmt.Sprintf("%x", hash)
 }
 
-func checkSignature(c *gin.Context, specificParameter map[string]string) (*User, error) {
+func checkSignature(c *gin.Context, specificParameter map[string]string) (*model.User, error) {
 	accessKey := c.GetHeader("X-Ca-Key")
 	if accessKey == "" {
 		return nil, errors.New("No AccessKey")
@@ -172,7 +172,7 @@ func checkSignature(c *gin.Context, specificParameter map[string]string) (*User,
 		Timestamp:      timestamp,
 	}
 
-	var user User
+	var user model.User
 	db.Select("id, secret_key").Where("access_key = ?", accessKey).First(&user)
 	if user.ID == 0 {
 		return nil, errors.New("User not Exist")

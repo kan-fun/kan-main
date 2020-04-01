@@ -19,7 +19,7 @@ func sendSMSCode(c *gin.Context) {
 		return
 	}
 
-	err = service_global.sms(number, raw)
+	err = serviceGlobal.sms(number, raw)
 	if err != nil {
 		log.Println(err)
 		c.String(403, "Fail to Send SMS Code")
