@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 )
@@ -23,13 +24,13 @@ func (s realService) email(address string, subject string, body string) error {
 	request.Version = "2015-11-23"
 	request.ApiName = "SingleSendMail"
 
-	request.QueryParams["AccountName"] = "no-reply@mail.kan-fun.com"
+	request.QueryParams["AccountName"] = "no-reply@kan-fun.com"
 	request.QueryParams["AddressType"] = "1"
 	request.QueryParams["ReplyToAddress"] = "false"
 	request.QueryParams["ToAddress"] = address
 	request.QueryParams["Subject"] = subject
 
-	if body == "" {
+	if strings.TrimSpace(body) == "" {
 		request.QueryParams["HtmlBody"] = "<html></html>"
 	} else {
 		request.QueryParams["TextBody"] = body
