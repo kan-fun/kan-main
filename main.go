@@ -136,6 +136,7 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
+	panic(123)
 	setup(false)
 	serviceGlobal = realService{}
 	r := setupRouter()
