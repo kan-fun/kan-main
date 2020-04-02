@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -27,14 +26,6 @@ func sendEmail(c *gin.Context) {
 		return
 	}
 	specificParameter["topic"] = topic
-
-	body, _ := ioutil.ReadAll(c.Request.Body)
-	println("---body/--- \r\n " + string(body))
-
-	for k, v := range c.Request.Header {
-		println(k)
-		println(v)
-	}
 
 	// Check Signature and Get User(Contain id, secret_key)
 	user, err := checkSignature(c, specificParameter)
