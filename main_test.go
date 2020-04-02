@@ -37,11 +37,11 @@ func post(url string, data url.Values, commonParameter *core.CommonParameter, si
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	if commonParameter != nil {
-		req.Header.Set("X-Ca-Key", commonParameter.AccessKey)
-		req.Header.Set("X-Ca-Timestamp", commonParameter.Timestamp)
-		req.Header.Set("X-Ca-Nonce", commonParameter.SignatureNonce)
+		req.Header.Set("Kan-Key", commonParameter.AccessKey)
+		req.Header.Set("Kan-Timestamp", commonParameter.Timestamp)
+		req.Header.Set("Kan-Nonce", commonParameter.SignatureNonce)
 
-		req.Header.Set("X-Ca-Signature", signature)
+		req.Header.Set("Kan-Signature", signature)
 	}
 
 	w := httptest.NewRecorder()

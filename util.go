@@ -147,22 +147,22 @@ func hashPassword(password string) string {
 
 func checkSignature(c *gin.Context, specificParameter map[string]string) (*model.User, error) {
 
-	signatureNonce := c.GetHeader("Kan-X-Ca-Nonce")
+	signatureNonce := c.GetHeader("Kan-Nonce")
 	if signatureNonce == "" {
 		return nil, errors.New("No SignatureNonce")
 	}
 
-	timestamp := c.GetHeader("Kan-X-Ca-Timestamp")
+	timestamp := c.GetHeader("Kan-Timestamp")
 	if timestamp == "" {
 		return nil, errors.New("No Timestamp")
 	}
 
-	accessKey := c.GetHeader("Kan-X-Ca-Key")
+	accessKey := c.GetHeader("Kan-Key")
 	if accessKey == "" {
 		return nil, errors.New("No AccessKey")
 	}
 
-	signature := c.GetHeader("Kan-X-Ca-Signature")
+	signature := c.GetHeader("Kan-Signature")
 	if signature == "" {
 		return nil, errors.New("No Signature")
 	}
