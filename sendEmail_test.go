@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	sign "github.com/kan-fun/kan-core"
+	core "github.com/kan-fun/kan-core"
 	"github.com/kan-fun/kan-server-core/model"
 )
 
@@ -27,7 +27,7 @@ func TestSendEmail(t *testing.T) {
 	signatureNonce := "sn123"
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
-	commonParameter := sign.CommonParameter{
+	commonParameter := core.CommonParameter{
 		AccessKey:      accessKey,
 		SignatureNonce: signatureNonce,
 		Timestamp:      timestamp,
@@ -41,7 +41,7 @@ func TestSendEmail(t *testing.T) {
 	specificParameter["msg"] = msg
 	specificParameter["topic"] = topic
 
-	credential, err := sign.NewCredential(user.AccessKey, user.SecretKey)
+	credential, err := core.NewCredential(user.AccessKey, user.SecretKey)
 	assert.Equal(t, nil, err)
 
 	signature := credential.Sign(commonParameter, specificParameter)

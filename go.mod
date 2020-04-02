@@ -7,7 +7,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.6.2
 	github.com/jinzhu/gorm v1.9.12
-	github.com/kan-fun/kan-core v0.0.0-20200319083659-ebf62386d7e6
+	github.com/kan-fun/kan-core v0.0.0-20200402105347-e161af5cd7c8
 	github.com/kan-fun/kan-server-core v0.0.0-20200319083204-cdab4f54fd23
 	github.com/stretchr/testify v1.5.1
 )

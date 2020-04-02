@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	sign "github.com/kan-fun/kan-core"
+	core "github.com/kan-fun/kan-core"
 	"github.com/kan-fun/kan-server-core/model"
 )
 
@@ -30,7 +30,7 @@ func dropAndMigrate() {
 	autoMigrate()
 }
 
-func post(url string, data url.Values, commonParameter *sign.CommonParameter, signature string) *httptest.ResponseRecorder {
+func post(url string, data url.Values, commonParameter *core.CommonParameter, signature string) *httptest.ResponseRecorder {
 	body := strings.NewReader(data.Encode())
 
 	req, _ := http.NewRequest("POST", url, body)
@@ -61,7 +61,7 @@ func createUser(email string, password string) *httptest.ResponseRecorder {
 		"email":      {email},
 		"password":   {password},
 		"code":       {raw},
-		"code_hash":  {sign.HashString(raw, secretKeyGlobal)},
+		"code_hash":  {core.HashString(raw, secretKeyGlobal)},
 		"channel_id": {email},
 	}
 

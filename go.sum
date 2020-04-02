@@ -41,6 +41,10 @@ github.com/json-iterator/go v1.1.9/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/u
 github.com/jtolds/gls v4.20.0+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfVYBRgL+9YlvaHOwJU=
 github.com/kan-fun/kan-core v0.0.0-20200319083659-ebf62386d7e6 h1:d/rPYE+0Wnpjlnuaj9l9dNr1Knd5Z/6pJT7NnRt2eGQ=
 github.com/kan-fun/kan-core v0.0.0-20200319083659-ebf62386d7e6/go.mod h1:io3ZAaSXwGnRirzE4+kLXHPRTbf1MA/01dKpq0cifY8=
+github.com/kan-fun/kan-core v0.0.0-20200402104322-117cb0ab7b75 h1:oFXQK1L7YdGglHZJKhbe8k6wIZk3mk2rW95JEMqm7L8=
+github.com/kan-fun/kan-core v0.0.0-20200402104322-117cb0ab7b75/go.mod h1:yhhLja571WlLyqlalrnCMR46hdQWWZP74L5yRE727II=
+github.com/kan-fun/kan-core v0.0.0-20200402105347-e161af5cd7c8 h1:IrJG8JtYmkFmotGADvYwtViiSr9OviU1GGwDj6jUtE8=
+github.com/kan-fun/kan-core v0.0.0-20200402105347-e161af5cd7c8/go.mod h1:yhhLja571WlLyqlalrnCMR46hdQWWZP74L5yRE727II=
 github.com/kan-fun/kan-server-core v0.0.0-20200319083204-cdab4f54fd23 h1:YzI+Q3EgWU4Y+H8WO+tflM7ERWqJ7xQlAYsgN5RiutY=
 github.com/kan-fun/kan-server-core v0.0.0-20200319083204-cdab4f54fd23/go.mod h1:Q3QpG+dfs/BkjDW43qBqmHb0802sEx4wrHy0PDcq/v0=
 github.com/leodido/go-urn v1.2.0 h1:hpXL4XnriNwQ/ABnpepYM/1vCLWNDfUNts8dX3xTG6Y=

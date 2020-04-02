@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	sign "github.com/kan-fun/kan-core"
+	core "github.com/kan-fun/kan-core"
 	"github.com/kan-fun/kan-server-core/model"
 )
 
@@ -47,7 +47,7 @@ func signup(c *gin.Context) {
 		return
 	}
 
-	expectedCodeHash := sign.HashString(code, secretKeyGlobal)
+	expectedCodeHash := core.HashString(code, secretKeyGlobal)
 
 	if expectedCodeHash != codeHash {
 		c.String(403, "Code is wrong")

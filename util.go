@@ -18,7 +18,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	sign "github.com/kan-fun/kan-core"
+	core "github.com/kan-fun/kan-core"
 	"github.com/kan-fun/kan-server-core/model"
 )
 
@@ -91,7 +91,7 @@ func generateCode(channelID string) (raw string, token string, err error) {
 	}
 
 	raw = strings.Join(ints, "")
-	hash := sign.HashString(raw, secretKeyGlobal)
+	hash := core.HashString(raw, secretKeyGlobal)
 
 	token, err = generateCodeToken(hash, channelID)
 	if err != nil {
@@ -166,7 +166,7 @@ func checkSignature(c *gin.Context, specificParameter map[string]string) (*model
 		return nil, errors.New("No Timestamp")
 	}
 
-	commonParameter := sign.CommonParameter{
+	commonParameter := core.CommonParameter{
 		AccessKey:      accessKey,
 		SignatureNonce: signatureNonce,
 		Timestamp:      timestamp,
@@ -178,7 +178,7 @@ func checkSignature(c *gin.Context, specificParameter map[string]string) (*model
 		return nil, errors.New("User not Exist")
 	}
 
-	credential, err := sign.NewCredential(accessKey, user.SecretKey)
+	credential, err := core.NewCredential(accessKey, user.SecretKey)
 	if err != nil {
 		return nil, err
 	}

@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
+
+	core "github.com/kan-fun/kan-core"
 )
 
 type service interface {
@@ -30,7 +31,7 @@ func (s realService) email(address string, subject string, body string) error {
 	request.QueryParams["ToAddress"] = address
 	request.QueryParams["Subject"] = subject
 
-	if strings.TrimSpace(body) == "" {
+	if core.IsAllWhiteChar(body) {
 		request.QueryParams["HtmlBody"] = "<html></html>"
 	} else {
 		request.QueryParams["TextBody"] = body
