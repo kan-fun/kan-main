@@ -1,4 +1,4 @@
-wget https://webplus-cn-shenzhen.oss-cn-shenzhen.aliyuncs.com/cli/wpctl-linux
+wget -q https://webplus-cn-shenzhen.oss-cn-shenzhen.aliyuncs.com/cli/wpctl-linux
 mv ./wpctl-linux ./wpctl
 chmod +x ./wpctl
 
