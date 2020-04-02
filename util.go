@@ -56,30 +56,31 @@ func getPrivateKey(test bool) (*rsa.PrivateKey, error) {
 		bitSize := 512
 
 		return rsa.GenerateKey(reader, bitSize)
-	} else {
-		url, ok := os.LookupEnv("KAN_PRIVATE_KEY_URL")
-		if !ok {
-			return nil, errors.New("KAN_PRIVATE_KEY_URL not set")
-		}
-
-		resp, err := http.Get(url)
-		if err != nil {
-			return nil, err
-		}
-		defer resp.Body.Close()
-
-		bytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		privateKey, err := jwt.ParseRSAPrivateKeyFromPEM(bytes)
-		if err != nil {
-			return nil, err
-		}
-
-		return privateKey, nil
 	}
+
+	url, ok := os.LookupEnv("KAN_PRIVATE_KEY_URL")
+	if !ok {
+		return nil, errors.New("KAN_PRIVATE_KEY_URL not set")
+	}
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	privateKey, err := jwt.ParseRSAPrivateKeyFromPEM(bytes)
+	if err != nil {
+		return nil, err
+	}
+
+	return privateKey, nil
+
 }
 
 func generateCode(channelID string) (raw string, token string, err error) {
