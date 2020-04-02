@@ -35,3 +35,10 @@ jobs:
 
     - name: Test
       run: go test -v .
+
+    - name: Deploy
+      run: ./deploy.sh
+      env:
+        ALICLOUD_ACCESS_KEY: ${{ secrets.ACCESSKEY }}
+        ALICLOUD_SECRET_KEY: ${{ secrets.SECRETKEY }}
+        ALICLOUD_REGION: ${{ secrets.REGION }}
