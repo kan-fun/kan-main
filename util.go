@@ -146,15 +146,6 @@ func hashPassword(password string) string {
 }
 
 func checkSignature(c *gin.Context, specificParameter map[string]string) (*model.User, error) {
-	accessKey := c.GetHeader("X-Ca-Key")
-	if accessKey == "" {
-		return nil, errors.New("No AccessKey")
-	}
-
-	signature := c.GetHeader("X-Ca-Signature")
-	if signature == "" {
-		return nil, errors.New("No Signature")
-	}
 
 	signatureNonce := c.GetHeader("X-Ca-Nonce")
 	if signatureNonce == "" {
@@ -164,6 +155,16 @@ func checkSignature(c *gin.Context, specificParameter map[string]string) (*model
 	timestamp := c.GetHeader("X-Ca-Timestamp")
 	if timestamp == "" {
 		return nil, errors.New("No Timestamp")
+	}
+
+	accessKey := c.GetHeader("X-Ca-Key")
+	if accessKey == "" {
+		return nil, errors.New("No AccessKey")
+	}
+
+	signature := c.GetHeader("X-Ca-Signature")
+	if signature == "" {
+		return nil, errors.New("No Signature")
 	}
 
 	commonParameter := core.CommonParameter{
