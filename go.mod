@@ -3,10 +3,9 @@ module github.com/kan-fun/kan-main
 go 1.14
 
 require (
-	github.com/aliyun/alibaba-cloud-sdk-go v1.61.87
+	github.com/aliyun/alibaba-cloud-sdk-go v1.61.89
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.6.2
-	github.com/gorilla/websocket v1.4.2
 	github.com/jinzhu/gorm v1.9.12
 	github.com/kan-fun/kan-core v0.0.0-20200402105347-e161af5cd7c8
 	github.com/kan-fun/kan-server-core v0.0.0-20200319083204-cdab4f54fd23
