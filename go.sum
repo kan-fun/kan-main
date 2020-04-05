@@ -4,6 +4,8 @@ github.com/aliyun/alibaba-cloud-sdk-go v1.61.87 h1:EbDzL7483M56OnoVgR0kImqfdn9ws
 github.com/aliyun/alibaba-cloud-sdk-go v1.61.87/go.mod h1:v8ESoHo4SyHmuB4b1tJqDHxfTGEciD+yhvOU/5s1Rfk=
 github.com/aliyun/alibaba-cloud-sdk-go v1.61.89 h1:Ra78aQMaznMrGpqexF2BD8mpr4IUT6ysF1fYLYT6lx0=
 github.com/aliyun/alibaba-cloud-sdk-go v1.61.89/go.mod h1:v8ESoHo4SyHmuB4b1tJqDHxfTGEciD+yhvOU/5s1Rfk=
+github.com/aliyun/alibaba-cloud-sdk-go v1.61.90 h1:mSPYBmf3ZPqUz6loQca9pMgKm0+OhP/arWyr8CkWiGw=
+github.com/aliyun/alibaba-cloud-sdk-go v1.61.90/go.mod h1:v8ESoHo4SyHmuB4b1tJqDHxfTGEciD+yhvOU/5s1Rfk=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -51,6 +53,8 @@ github.com/kan-fun/kan-core v0.0.0-20200402104322-117cb0ab7b75 h1:oFXQK1L7YdGglH
 github.com/kan-fun/kan-core v0.0.0-20200402104322-117cb0ab7b75/go.mod h1:yhhLja571WlLyqlalrnCMR46hdQWWZP74L5yRE727II=
 github.com/kan-fun/kan-core v0.0.0-20200402105347-e161af5cd7c8 h1:IrJG8JtYmkFmotGADvYwtViiSr9OviU1GGwDj6jUtE8=
 github.com/kan-fun/kan-core v0.0.0-20200402105347-e161af5cd7c8/go.mod h1:yhhLja571WlLyqlalrnCMR46hdQWWZP74L5yRE727II=
+github.com/kan-fun/kan-core v0.0.0-20200405131218-c2ca79386b91 h1:qovHcYIy2jpcDA/DxGmY23dYMlh5howkH+A7y9zADZ0=
+github.com/kan-fun/kan-core v0.0.0-20200405131218-c2ca79386b91/go.mod h1:yhhLja571WlLyqlalrnCMR46hdQWWZP74L5yRE727II=
 github.com/kan-fun/kan-server-core v0.0.0-20200319083204-cdab4f54fd23 h1:YzI+Q3EgWU4Y+H8WO+tflM7ERWqJ7xQlAYsgN5RiutY=
 github.com/kan-fun/kan-server-core v0.0.0-20200319083204-cdab4f54fd23/go.mod h1:Q3QpG+dfs/BkjDW43qBqmHb0802sEx4wrHy0PDcq/v0=
 github.com/leodido/go-urn v1.2.0 h1:hpXL4XnriNwQ/ABnpepYM/1vCLWNDfUNts8dX3xTG6Y=
