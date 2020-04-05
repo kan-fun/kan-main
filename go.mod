@@ -10,4 +10,5 @@ require (
 	github.com/kan-fun/kan-core v0.0.0-20200402105347-e161af5cd7c8
 	github.com/kan-fun/kan-server-core v0.0.0-20200319083204-cdab4f54fd23
 	github.com/stretchr/testify v1.5.1
+	github.com/gorilla/websocket v1.4.2
 )
