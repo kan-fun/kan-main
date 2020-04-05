@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
@@ -15,15 +17,22 @@ func logPub(c *gin.Context) {
 		return
 	}
 
-	ws, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		c.String(403, err.Error())
 		return
 	}
-	defer ws.Close()
+	defer log.Println("Close conn!!!!!!")
+	defer conn.Close()
 
-	err = ws.WriteMessage(websocket.TextMessage, []byte("123456"))
-	if err != nil {
-		println("Wrong websocket")
+	for {
+		mt, message, err := conn.ReadMessage()
+		if err != nil {
+			log.Println("read:", err)
+			break
+		}
+		log.Printf("recvMT")
+		log.Print(mt)
+		log.Printf("recv: %s", message)
 	}
 }
