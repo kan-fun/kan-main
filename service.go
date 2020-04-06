@@ -82,15 +82,19 @@ func (s realService) bin(platform string) (result []string, err error) {
 		return
 	}
 
+	path := fmt.Sprintf("%s/", platform)
+
 	marker := ""
 	for {
-		lsRes, err := bucket.ListObjects(oss.Marker(marker), oss.Prefix(fmt.Sprintf("%s/", platform)))
+		lsRes, err := bucket.ListObjects(oss.Marker(marker), oss.Prefix(path))
 		if err != nil {
 			return nil, err
 		}
 
 		for _, object := range lsRes.Objects {
-			result = append(result, object.Key)
+			if object.Key != path {
+				result = append(result, object.Key)
+			}
 		}
 
 		if lsRes.IsTruncated {
