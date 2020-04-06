@@ -84,12 +84,13 @@ func (s realService) bin(platform string) (result []string, err error) {
 
 	marker := ""
 	for {
-		lsRes, err := bucket.ListObjects(oss.Marker(marker), oss.Prefix(platform), oss.Delimiter("/"))
+		lsRes, err := bucket.ListObjects(oss.Marker(marker), oss.Prefix(platform))
 		if err != nil {
-			return nil, nil
+			return nil, err
 		}
 
 		for _, object := range lsRes.Objects {
+			println(object.Key)
 			result = append(result, object.Key)
 		}
 
@@ -99,6 +100,8 @@ func (s realService) bin(platform string) (result []string, err error) {
 			break
 		}
 	}
+
+	result = append(result, "object.Key")
 
 	return
 }

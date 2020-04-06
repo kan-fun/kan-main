@@ -20,6 +20,7 @@ func bin(c *gin.Context) {
 
 	result, err := serviceGlobal.bin(platform)
 	if err != nil {
+		println(err.Error())
 		c.String(502, "Internal Error")
 		return
 	}
