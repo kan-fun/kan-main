@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 
 	core "github.com/kan-fun/kan-core"
 )
@@ -11,6 +12,7 @@ import (
 type service interface {
 	email(address string, subject string, body string) error
 	sms(number string, code string) error
+	bin(platform string) ([]string, error)
 }
 
 type realService struct {
@@ -70,4 +72,37 @@ func (s realService) sms(number string, code string) error {
 
 func (s mockService) sms(number string, code string) error {
 	return nil
+}
+
+func (s realService) bin(platform string) (result []string, err error) {
+	bucketName := "kan-bin"
+
+	bucket, err := ossClientGlobal.Bucket(bucketName)
+	if err != nil {
+		return
+	}
+
+	marker := ""
+	for {
+		lsRes, err := bucket.ListObjects(oss.Marker(marker), oss.Prefix(platform), oss.Delimiter("/"))
+		if err != nil {
+			return nil, nil
+		}
+
+		for _, object := range lsRes.Objects {
+			result = append(result, object.Key)
+		}
+
+		if lsRes.IsTruncated {
+			marker = lsRes.NextMarker
+		} else {
+			break
+		}
+	}
+
+	return
+}
+
+func (s mockService) bin(platform string) (result []string, err error) {
+	return
 }

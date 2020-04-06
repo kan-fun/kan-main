@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -23,6 +24,7 @@ var secretKeyStr string
 var db *gorm.DB
 
 var clientGlobal *sdk.Client
+var ossClientGlobal *oss.Client
 var serviceGlobal service
 
 var privateKeyGlobal *rsa.PrivateKey
@@ -119,6 +121,14 @@ func setup(test bool) {
 	}
 
 	clientGlobal = clientLocal
+
+	// Init OSS Client
+	ossClientLocal, err := oss.New("oss-cn-beijing.aliyuncs.com", aliyunAccessKey, aliyunSecretKey)
+	if err != nil {
+		panic(err)
+	}
+
+	ossClientGlobal = ossClientLocal
 }
 
 func setupRouter() *gin.Engine {
@@ -132,6 +142,7 @@ func setupRouter() *gin.Engine {
 	r.POST("/send-email-code", sendEmailCode)
 	r.POST("/send-sms-code", sendSMSCode)
 	r.GET("/log/pub", logPub)
+	r.GET("/bin", bin)
 
 	return r
 }
