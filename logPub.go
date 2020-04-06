@@ -22,7 +22,6 @@ func logPub(c *gin.Context) {
 		c.String(403, err.Error())
 		return
 	}
-	defer log.Println("Close conn!!!!!!")
 	defer conn.Close()
 
 	for {

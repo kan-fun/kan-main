@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -20,7 +21,7 @@ func bin(c *gin.Context) {
 
 	result, err := serviceGlobal.bin(platform)
 	if err != nil {
-		println(err.Error())
+		log.Println(err)
 		c.String(502, "Internal Error")
 		return
 	}
