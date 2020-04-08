@@ -25,6 +25,7 @@ import (
 func autoMigrate() {
 	db.AutoMigrate(&model.User{})
 	db.AutoMigrate(&model.ChannelEmail{})
+	db.AutoMigrate(&model.Log{})
 }
 
 type codeClaims struct {
