@@ -11,6 +11,7 @@ import (
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/aliyun/aliyun-tablestore-go-sdk/tablestore"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -25,6 +26,7 @@ var db *gorm.DB
 
 var clientGlobal *sdk.Client
 var ossClientGlobal *oss.Client
+var tableStoreClientGlobal *tablestore.TableStoreClient
 var serviceGlobal service
 
 var privateKeyGlobal *rsa.PrivateKey
@@ -129,6 +131,10 @@ func setup(test bool) {
 	}
 
 	ossClientGlobal = ossClientLocal
+
+	// Init TableStore Client
+	tableStoreClientLocal := tablestore.NewClient("https://kan.cn-beijing.ots.aliyuncs.com", "kan", aliyunAccessKey, aliyunSecretKey)
+	tableStoreClientGlobal = tableStoreClientLocal
 }
 
 func setupRouter() *gin.Engine {

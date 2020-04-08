@@ -5,6 +5,7 @@ import (
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/aliyun/aliyun-tablestore-go-sdk/tablestore"
 
 	core "github.com/kan-fun/kan-core"
 )
@@ -13,6 +14,7 @@ type service interface {
 	email(address string, subject string, body string) error
 	sms(number string, code string) error
 	bin(platform string) ([]string, error)
+	log(reversedID string, content string) error
 }
 
 type realService struct {
@@ -108,5 +110,29 @@ func (s realService) bin(platform string) (result []string, err error) {
 }
 
 func (s mockService) bin(platform string) (result []string, err error) {
+	return
+}
+
+func (s realService) log(reversedID string, content string) (err error) {
+	putRowRequest := new(tablestore.PutRowRequest)
+	putRowChange := new(tablestore.PutRowChange)
+	putRowChange.TableName = "log"
+
+	putPk := new(tablestore.PrimaryKey)
+	putPk.AddPrimaryKeyColumn("reversed_id", reversedID)
+	putPk.AddPrimaryKeyColumnWithAutoIncrement("auto_id")
+	putRowChange.PrimaryKey = putPk
+
+	putRowChange.AddColumn("content", content)
+
+	putRowChange.SetCondition(tablestore.RowExistenceExpectation_IGNORE)
+	putRowRequest.PutRowChange = putRowChange
+
+	_, err = tableStoreClientGlobal.PutRow(putRowRequest)
+
+	return
+}
+
+func (s mockService) log(reversedID string, content string) (err error) {
 	return
 }
