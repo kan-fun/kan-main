@@ -14,7 +14,7 @@ type service interface {
 	email(address string, subject string, body string) error
 	sms(number string, code string) error
 	bin(platform string) ([]string, error)
-	log(reversedID string, content string) error
+	logPut(reversedID string, content string) error
 }
 
 type realService struct {
@@ -113,7 +113,7 @@ func (s mockService) bin(platform string) (result []string, err error) {
 	return
 }
 
-func (s realService) log(reversedID string, content string) (err error) {
+func (s realService) logPut(reversedID string, content string) (err error) {
 	putRowRequest := new(tablestore.PutRowRequest)
 	putRowChange := new(tablestore.PutRowChange)
 	putRowChange.TableName = "log"
@@ -133,6 +133,6 @@ func (s realService) log(reversedID string, content string) (err error) {
 	return
 }
 
-func (s mockService) log(reversedID string, content string) (err error) {
+func (s mockService) logPut(reversedID string, content string) (err error) {
 	return
 }

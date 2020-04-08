@@ -61,7 +61,7 @@ func logPub(c *gin.Context) {
 
 		content := string(contentBytes)
 
-		if err := serviceGlobal.log(reversedID, content); err != nil {
+		if err := serviceGlobal.logPut(reversedID, content); err != nil {
 			log.Println(err)
 		}
 	}
