@@ -17,7 +17,7 @@ func reverse(s string) string {
 	return string(r)
 }
 
-var upgrader = websocket.Upgrader{}
+var pubUpgrader = websocket.Upgrader{}
 
 func logPub(c *gin.Context) {
 	// Check Signature and Get User(Contain id, secret_key)
@@ -27,7 +27,7 @@ func logPub(c *gin.Context) {
 		return
 	}
 
-	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	conn, err := pubUpgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		c.String(403, err.Error())
 		return

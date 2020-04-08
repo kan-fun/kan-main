@@ -148,6 +148,7 @@ func setupRouter() *gin.Engine {
 	r.POST("/send-email-code", sendEmailCode)
 	r.POST("/send-sms-code", sendSMSCode)
 	r.GET("/log/pub", logPub)
+	r.GET("/log/sub", logSub)
 	r.GET("/bin", bin)
 
 	return r
