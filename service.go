@@ -15,6 +15,7 @@ type service interface {
 	sms(number string, code string) error
 	bin(platform string) ([]string, error)
 	logPut(reversedID string, content string) error
+	logGetToEnd(reversedID string, lastAutoID int64) ([]string, int64, error)
 }
 
 type realService struct {
@@ -134,5 +135,55 @@ func (s realService) logPut(reversedID string, content string) (err error) {
 }
 
 func (s mockService) logPut(reversedID string, content string) (err error) {
+	return
+}
+
+func (s realService) logGetToEnd(reversedID string, lastAutoID int64) (result []string, newLastAutoID int64, err error) {
+	newLastAutoID = lastAutoID
+
+	getRangeRequest := &tablestore.GetRangeRequest{}
+	rangeRowQueryCriteria := &tablestore.RangeRowQueryCriteria{}
+	rangeRowQueryCriteria.TableName = "log"
+
+	startPK := new(tablestore.PrimaryKey)
+	startPK.AddPrimaryKeyColumn("reversed_id", reversedID)
+	startPK.AddPrimaryKeyColumn("auto_id", lastAutoID+1)
+
+	endPK := new(tablestore.PrimaryKey)
+	endPK.AddPrimaryKeyColumn("reversed_id", reversedID)
+	endPK.AddPrimaryKeyColumnWithMaxValue("auto_id")
+
+	rangeRowQueryCriteria.StartPrimaryKey = startPK
+	rangeRowQueryCriteria.EndPrimaryKey = endPK
+	rangeRowQueryCriteria.Direction = tablestore.FORWARD
+	rangeRowQueryCriteria.MaxVersion = 1
+	rangeRowQueryCriteria.Limit = 10
+	getRangeRequest.RangeRowQueryCriteria = rangeRowQueryCriteria
+
+	getRangeResp, err := tableStoreClientGlobal.GetRange(getRangeRequest)
+
+	for {
+		if err != nil {
+			return
+		}
+
+		for _, row := range getRangeResp.Rows {
+			result = append(result, row.Columns[0].Value.(string))
+		}
+
+		newLastAutoID = getRangeResp.Rows[len(getRangeResp.Rows)-1].PrimaryKey.PrimaryKeys[1].Value.(int64)
+
+		if getRangeResp.NextStartPrimaryKey == nil {
+			break
+		} else {
+			getRangeRequest.RangeRowQueryCriteria.StartPrimaryKey = getRangeResp.NextStartPrimaryKey
+			getRangeResp, err = tableStoreClientGlobal.GetRange(getRangeRequest)
+		}
+	}
+
+	return
+}
+
+func (s mockService) logGetToEnd(reversedID string, lastAutoID int64) (result []string, newLastAutoID int64, err error) {
 	return
 }
