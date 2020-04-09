@@ -62,6 +62,7 @@ func logPub(c *gin.Context) {
 				// Todo: do sth if user want to get notify when exit code not 0
 				db.Model(&_log).Update("status", 2)
 			} else {
+				println(err)
 				// Todo: do sth if user want to get notify when websocket disconnect abnormal
 				db.Model(&_log).Update("status", 3)
 			}
