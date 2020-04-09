@@ -58,11 +58,10 @@ func logPub(c *gin.Context) {
 		if err != nil {
 			if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
 				db.Model(&_log).Update("status", 1)
-			} else if websocket.IsCloseError(err, 1) {
+			} else if websocket.IsCloseError(err, 4000) {
 				// Todo: do sth if user want to get notify when exit code not 0
 				db.Model(&_log).Update("status", 2)
 			} else {
-				println(err)
 				// Todo: do sth if user want to get notify when websocket disconnect abnormal
 				db.Model(&_log).Update("status", 3)
 			}
