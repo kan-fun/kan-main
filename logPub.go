@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -50,7 +51,7 @@ func logPub(c *gin.Context) {
 		return
 	}
 
-	reversedID := reverse(string(_log.ID))
+	reversedID := reverse(strconv.FormatUint(uint64(_log.ID), 10))
 
 	for {
 		_, contentBytes, err := conn.ReadMessage()
