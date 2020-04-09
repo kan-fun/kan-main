@@ -96,7 +96,8 @@ func (s realService) bin(platform string) (result []string, err error) {
 
 		for _, object := range lsRes.Objects {
 			if object.Key != path {
-				result = append(result, object.Key)
+				filename := object.Key[len(path):]
+				result = append(result, filename)
 			}
 		}
 
