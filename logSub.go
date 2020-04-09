@@ -53,9 +53,10 @@ func logSub(c *gin.Context) {
 
 	var lastAutoID int64 = 0
 	var contents []string
+	fromHead := true
 
 	for {
-		contents, lastAutoID, err = serviceGlobal.logGetToEnd(reversedID, lastAutoID)
+		contents, lastAutoID, err = serviceGlobal.logGetToEnd(reversedID, fromHead, lastAutoID)
 		if err != nil {
 			c.String(403, err.Error())
 			return
@@ -64,6 +65,8 @@ func logSub(c *gin.Context) {
 		for _, content := range contents {
 			conn.WriteMessage(websocket.TextMessage, []byte(content))
 		}
+
+		fromHead = false
 
 		time.Sleep(2 * time.Second)
 	}

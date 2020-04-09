@@ -15,7 +15,7 @@ type service interface {
 	sms(number string, code string) error
 	bin(platform string) ([]string, error)
 	logPut(reversedID string, content string) error
-	logGetToEnd(reversedID string, lastAutoID int64) ([]string, int64, error)
+	logGetToEnd(reversedID string, fromHead bool, lastAutoID int64) ([]string, int64, error)
 }
 
 type realService struct {
@@ -138,7 +138,7 @@ func (s mockService) logPut(reversedID string, content string) (err error) {
 	return
 }
 
-func (s realService) logGetToEnd(reversedID string, lastAutoID int64) (result []string, newLastAutoID int64, err error) {
+func (s realService) logGetToEnd(reversedID string, fromHead bool, lastAutoID int64) (result []string, newLastAutoID int64, err error) {
 	newLastAutoID = lastAutoID
 
 	getRangeRequest := &tablestore.GetRangeRequest{}
@@ -147,7 +147,11 @@ func (s realService) logGetToEnd(reversedID string, lastAutoID int64) (result []
 
 	startPK := new(tablestore.PrimaryKey)
 	startPK.AddPrimaryKeyColumn("reversed_id", reversedID)
-	startPK.AddPrimaryKeyColumn("auto_id", lastAutoID+1)
+	if fromHead {
+		startPK.AddPrimaryKeyColumnWithMinValue("auto_id")
+	} else {
+		startPK.AddPrimaryKeyColumn("auto_id", lastAutoID+1)
+	}
 
 	endPK := new(tablestore.PrimaryKey)
 	endPK.AddPrimaryKeyColumn("reversed_id", reversedID)
@@ -171,7 +175,9 @@ func (s realService) logGetToEnd(reversedID string, lastAutoID int64) (result []
 			result = append(result, row.Columns[0].Value.(string))
 		}
 
-		newLastAutoID = getRangeResp.Rows[len(getRangeResp.Rows)-1].PrimaryKey.PrimaryKeys[1].Value.(int64)
+		if len(getRangeResp.Rows) != 0 {
+			newLastAutoID = getRangeResp.Rows[len(getRangeResp.Rows)-1].PrimaryKey.PrimaryKeys[1].Value.(int64)
+		}
 
 		if getRangeResp.NextStartPrimaryKey == nil {
 			break
@@ -184,6 +190,6 @@ func (s realService) logGetToEnd(reversedID string, lastAutoID int64) (result []
 	return
 }
 
-func (s mockService) logGetToEnd(reversedID string, lastAutoID int64) (result []string, newLastAutoID int64, err error) {
+func (s mockService) logGetToEnd(reversedID string, fromHead bool, lastAutoID int64) (result []string, newLastAutoID int64, err error) {
 	return
 }
