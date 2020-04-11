@@ -28,7 +28,9 @@ func wechatPost(c *gin.Context) {
 		return
 	}
 
-	resp := message.NewText("hhhhhh")
+	resp := message.NewText(`
+	<a href="https://www.kan-fun.com/">kan</a>
+	`)
 	resp.SetToUserName(req.FromUserName)
 	resp.SetFromUserName(req.ToUserName)
 	resp.SetCreateTime(req.CreateTime)
