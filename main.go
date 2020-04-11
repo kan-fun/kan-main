@@ -150,6 +150,7 @@ func setupRouter() *gin.Engine {
 	r.GET("/log/pub", logPub)
 	r.GET("/log/sub", logSub)
 	r.GET("/bin", bin)
+	r.GET("/wechat", wechat)
 
 	return r
 }
