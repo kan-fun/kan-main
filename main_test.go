@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bytes"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"reflect"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -30,11 +33,24 @@ func dropAndMigrate() {
 	autoMigrate()
 }
 
-func post(url string, data url.Values, commonParameter *core.CommonParameter, signature string) *httptest.ResponseRecorder {
-	body := strings.NewReader(data.Encode())
+func post(urlString string, data interface{}, commonParameter *core.CommonParameter, signature string) *httptest.ResponseRecorder {
+	var body io.Reader
 
-	req, _ := http.NewRequest("POST", url, body)
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	switch v := reflect.ValueOf(data); v.Kind() {
+	case reflect.String:
+		body = bytes.NewBuffer([]byte(v.String()))
+	default:
+		formData := data.(url.Values)
+		body = strings.NewReader(formData.Encode())
+	}
+
+	req, _ := http.NewRequest("POST", urlString, body)
+	switch v := reflect.ValueOf(data); v.Kind() {
+	case reflect.String:
+		req.Header.Set("Content-Type", "application/xml; charset=utf-8")
+	default:
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	}
 
 	if commonParameter != nil {
 		req.Header.Set("Kan-Key", commonParameter.AccessKey)
