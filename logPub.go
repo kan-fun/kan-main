@@ -41,9 +41,22 @@ func logPub(c *gin.Context) {
 		return
 	}
 
+	_, logTypeBytes, err := conn.ReadMessage()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	logType, err := strconv.Atoi(string(logTypeBytes))
+	if err == nil {
+		log.Println(err)
+		return
+	}
+
 	_log := &model.Log{
 		UserID: user.ID,
 		Topic:  string(topic),
+		Type:   uint8(logType),
 	}
 
 	if err := db.Create(_log).Error; err != nil {
