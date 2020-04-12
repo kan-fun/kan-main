@@ -81,6 +81,8 @@ github.com/kan-fun/kan-server-core v0.0.0-20200409082405-c30231bfe2e0 h1:jG7xRRG
 github.com/kan-fun/kan-server-core v0.0.0-20200409082405-c30231bfe2e0/go.mod h1:Q3QpG+dfs/BkjDW43qBqmHb0802sEx4wrHy0PDcq/v0=
 github.com/kan-fun/kan-server-core v0.0.0-20200411235710-6b1724bf3d0b h1:l458kvYKoVYr6Q98IS5Hj6LOcitD9WuFchTpyon6IZ4=
 github.com/kan-fun/kan-server-core v0.0.0-20200411235710-6b1724bf3d0b/go.mod h1:Q3QpG+dfs/BkjDW43qBqmHb0802sEx4wrHy0PDcq/v0=
+github.com/kan-fun/kan-server-core v0.0.0-20200412002130-5982d4f79d50 h1:dkNztxte5x+2DrzWZ+EhMV4jhzNyro9O6ZdwYBtUEtA=
+github.com/kan-fun/kan-server-core v0.0.0-20200412002130-5982d4f79d50/go.mod h1:Q3QpG+dfs/BkjDW43qBqmHb0802sEx4wrHy0PDcq/v0=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=

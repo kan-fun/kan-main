@@ -42,9 +42,9 @@ func logSub(c *gin.Context) {
 		return
 	}
 
-	var _log model.Log
-	db.Select("id").Where("id = ?", id).First(&_log)
-	if _log.ID == 0 {
+	var task model.Task
+	db.Select("id").Where("id = ?", id).First(&task)
+	if task.ID == 0 {
 		c.String(403, err.Error())
 		return
 	}

@@ -53,30 +53,30 @@ func logPub(c *gin.Context) {
 		return
 	}
 
-	_log := &model.Log{
+	task := &model.Task{
 		UserID: user.ID,
 		Topic:  string(topic),
 		Type:   uint8(logType),
 	}
 
-	if err := db.Create(_log).Error; err != nil {
+	if err := db.Create(task).Error; err != nil {
 		log.Println(err)
 		return
 	}
 
-	reversedID := reverse(strconv.FormatUint(uint64(_log.ID), 10))
+	reversedID := reverse(strconv.FormatUint(uint64(task.ID), 10))
 
 	for {
 		_, contentBytes, err := conn.ReadMessage()
 		if err != nil {
 			if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
-				db.Model(&_log).Update("status", 1)
+				db.Model(&task).Update("status", 1)
 			} else if websocket.IsCloseError(err, 4000) {
 				// Todo: do sth if user want to get notify when exit code not 0
-				db.Model(&_log).Update("status", 2)
+				db.Model(&task).Update("status", 2)
 			} else {
 				// Todo: do sth if user want to get notify when websocket disconnect abnormal
-				db.Model(&_log).Update("status", 3)
+				db.Model(&task).Update("status", 3)
 			}
 
 			break

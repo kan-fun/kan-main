@@ -11,7 +11,7 @@ require (
 	github.com/gorilla/websocket v1.4.2
 	github.com/jinzhu/gorm v1.9.12
 	github.com/kan-fun/kan-core v0.0.0-20200405131218-c2ca79386b91
-	github.com/kan-fun/kan-server-core v0.0.0-20200411235710-6b1724bf3d0b
+	github.com/kan-fun/kan-server-core v0.0.0-20200412002130-5982d4f79d50
 	github.com/silenceper/wechat v1.2.3
 	github.com/stretchr/testify v1.5.1
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
