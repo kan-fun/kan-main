@@ -71,12 +71,27 @@ func logPub(c *gin.Context) {
 		if err != nil {
 			if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
 				db.Model(&task).Update("status", 1)
+
+				err = serviceGlobal.weChatNotify("oOCN8xCIjo5QXoDXokJO6Knib618", task.Topic, true)
+				if err != nil {
+					log.Println(err)
+				}
 			} else if websocket.IsCloseError(err, 4000) {
 				// Todo: do sth if user want to get notify when exit code not 0
 				db.Model(&task).Update("status", 2)
+
+				err = serviceGlobal.weChatNotify("oOCN8xCIjo5QXoDXokJO6Knib618", task.Topic, false)
+				if err != nil {
+					log.Println(err)
+				}
 			} else {
 				// Todo: do sth if user want to get notify when websocket disconnect abnormal
 				db.Model(&task).Update("status", 3)
+
+				err = serviceGlobal.weChatNotify("oOCN8xCIjo5QXoDXokJO6Knib618", task.Topic, false)
+				if err != nil {
+					log.Println(err)
+				}
 			}
 
 			break

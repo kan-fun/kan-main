@@ -1,7 +1,13 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"strings"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
@@ -16,6 +22,8 @@ type service interface {
 	bin(platform string) ([]string, error)
 	logPut(reversedID string, content string) error
 	logGetToEnd(reversedID string, fromHead bool, lastAutoID int64) ([]string, int64, error)
+	weChatGetAccessToken() (string, error)
+	weChatNotify(openID string, topic string, isSuccessful bool) error
 }
 
 type realService struct {
@@ -192,5 +200,93 @@ func (s realService) logGetToEnd(reversedID string, fromHead bool, lastAutoID in
 }
 
 func (s mockService) logGetToEnd(reversedID string, fromHead bool, lastAutoID int64) (result []string, newLastAutoID int64, err error) {
+	return
+}
+
+type weChatGetAccessTokenRespStruct struct {
+	AccessToken string `json:"access_token"`
+	ExpiresIn   uint32 `json:"expires_in"`
+}
+
+func (s realService) weChatGetAccessToken() (key string, err error) {
+	url := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", mpAPPID, mpSECRET)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	var wechatResp weChatGetAccessTokenRespStruct
+	err = json.Unmarshal(body, &wechatResp)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	if wechatResp.ExpiresIn == 0 {
+		err = errors.New("Fail to get Access Token")
+		return
+	}
+
+	key = wechatResp.AccessToken
+
+	return
+}
+
+func (s mockService) weChatGetAccessToken() (key string, err error) {
+	return
+}
+
+const contentTpl = `{
+	"touser":"%s",
+	"template_id":"%s",       
+	"data":{
+		"keyword1":{
+			"value":"%s",
+			"color":"#173177"
+		}
+	}
+}`
+
+const goodTplID = "F7KKMDk5Cm61PU8XJNAXGEWWFf3UBhEq1F5tsYeMygU"
+const badTplID = "3AG4C6YUJBfZ6pt1jwAhzaRd_biqT0vQj9iHmEPgnKc"
+
+func (s realService) weChatNotify(openID string, topic string, isSuccessful bool) (err error) {
+	var tplID string
+
+	if isSuccessful {
+		tplID = goodTplID
+	} else {
+		tplID = badTplID
+	}
+
+	content := fmt.Sprintf(contentTpl, openID, tplID, topic)
+
+	url := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", mpAccessToken)
+
+	req, err := http.NewRequest("POST", url, strings.NewReader(content))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer resp.Body.Close()
+
+	return
+}
+
+func (s mockService) weChatNotify(openID string, topic string, isSuccessful bool) (err error) {
 	return
 }

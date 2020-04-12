@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"log"
 	"math/rand"
 	"os"
 	"time"
@@ -23,6 +24,7 @@ var aliyunSecretKey string
 var secretKeyStr string
 var mpAPPID string
 var mpSECRET string
+var mpAccessToken string
 
 var db *gorm.DB
 
@@ -171,9 +173,31 @@ func setupRouter() *gin.Engine {
 	return r
 }
 
+func setMPAccessToken() {
+	accessToken, err := serviceGlobal.weChatGetAccessToken()
+	if err != nil {
+		log.Println(err)
+	}
+
+	mpAccessToken = accessToken
+}
+
 func main() {
 	setup(false)
 	serviceGlobal = realService{}
+
+	setMPAccessToken()
+
+	timer := time.NewTimer(100 * time.Minute)
+	defer timer.Stop()
+
+	go func() {
+		for {
+			<-timer.C
+			setMPAccessToken()
+		}
+	}()
+
 	r := setupRouter()
 	r.Run(":8080")
 }
