@@ -51,7 +51,7 @@ func TestSendEmail(t *testing.T) {
 		"topic": {topic},
 		"msg":   {msg},
 	}
-	w := post("/send-email", data, &commonParameter, signature)
+	w := testReq("post", "/send-email", data, &commonParameter, signature)
 	// ---
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, 2, len(w.Body.String()))
@@ -63,7 +63,7 @@ func TestSendEmail(t *testing.T) {
 		"msg":   {msg},
 	}
 
-	w = post("/send-email", data, &commonParameter, signature)
+	w = testReq("post", "/send-email", data, &commonParameter, signature)
 	// ---
 	assert.Equal(t, 403, w.Code)
 	assert.Equal(t, "Signature not Valid", w.Body.String())
@@ -81,7 +81,7 @@ func TestSendEmail(t *testing.T) {
 	cEmail.Count = 0
 	db.Save(&cEmail)
 
-	w = post("/send-email", data, &commonParameter, signature)
+	w = testReq("post", "/send-email", data, &commonParameter, signature)
 	// ---
 	assert.Equal(t, 403, w.Code)
 	assert.Equal(t, "Email Count not Enough", w.Body.String())
@@ -95,7 +95,7 @@ func TestSendEmail(t *testing.T) {
 	cEmail.Count = 10
 	db.Save(&cEmail)
 
-	w = post("/send-email", data, &commonParameter, signature)
+	w = testReq("post", "/send-email", data, &commonParameter, signature)
 	// ---
 	assert.Equal(t, 403, w.Code)
 	assert.Equal(t, "No topic", w.Body.String())

@@ -21,6 +21,8 @@ var aliyunRegionID string
 var aliyunAccessKey string
 var aliyunSecretKey string
 var secretKeyStr string
+var mpAPPID string
+var mpSECRET string
 
 var db *gorm.DB
 
@@ -88,6 +90,18 @@ func setup(test bool) {
 			panic("KAN_SECRET_KEY_STR not set")
 		}
 		secretKeyStr = secretKeyStrLocal
+
+		mpAPPIDLocal, ok := os.LookupEnv("KAN_MP_APPID")
+		if !ok {
+			panic("KAN_MP_APPID not set")
+		}
+		mpAPPID = mpAPPIDLocal
+
+		mpSECRETLocal, ok := os.LookupEnv("KAN_MP_SECRET")
+		if !ok {
+			panic("KAN_MP_SECRET not set")
+		}
+		mpSECRET = mpSECRETLocal
 	}
 
 	rand.Seed(time.Now().UnixNano())
@@ -152,6 +166,7 @@ func setupRouter() *gin.Engine {
 	r.GET("/bin", bin)
 	r.GET("/wechat", wechatGet)
 	r.POST("/wechat", wechatPost)
+	r.GET("/wechat-login", wechatLogin)
 
 	return r
 }

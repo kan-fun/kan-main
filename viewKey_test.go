@@ -17,7 +17,7 @@ func TestViewKey(t *testing.T) {
 
 	// ✅ Success
 	data := url.Values{"id": {"1"}}
-	w := post("/view-key", data, nil, "")
+	w := testReq("post", "/view-key", data, nil, "")
 
 	// ---
 	assert.Equal(t, 200, w.Code)
@@ -26,7 +26,7 @@ func TestViewKey(t *testing.T) {
 
 	// ❌ Failure
 	data = url.Values{"id": {"2"}}
-	w = post("/view-key", data, nil, "")
+	w = testReq("post", "/view-key", data, nil, "")
 
 	// ---
 	assert.Equal(t, 403, w.Code)

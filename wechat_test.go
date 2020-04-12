@@ -24,7 +24,7 @@ func TestWeChat(t *testing.T) {
 	<MsgId>1234567890123456</MsgId>
   </xml>
   `
-	w := post("/wechat", data, nil, "")
+	w := testReq("post", "/wechat", data, nil, "")
 
 	// ---
 	assert.Equal(t, 200, w.Code)
@@ -34,7 +34,7 @@ func TestWeChat(t *testing.T) {
 
 	// // ❌ Failure
 	// data = url.Values{"id": {"2"}}
-	// w = post("/view-key", data, nil, "")
+	// w = testReq("post", "/view-key", data, nil, "")
 
 	// // ---
 	// assert.Equal(t, 403, w.Code)

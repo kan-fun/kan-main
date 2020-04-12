@@ -26,6 +26,8 @@ func init() {
 func dropDB() {
 	db.DropTable(&model.User{})
 	db.DropTable(&model.ChannelEmail{})
+	db.DropTable(&model.ChannelWeChat{})
+	db.DropTable(&model.Task{})
 }
 
 func dropAndMigrate() {
@@ -33,18 +35,26 @@ func dropAndMigrate() {
 	autoMigrate()
 }
 
-func post(urlString string, data interface{}, commonParameter *core.CommonParameter, signature string) *httptest.ResponseRecorder {
+func testReq(method string, urlString string, data interface{}, commonParameter *core.CommonParameter, signature string) *httptest.ResponseRecorder {
 	var body io.Reader
 
-	switch v := reflect.ValueOf(data); v.Kind() {
-	case reflect.String:
-		body = bytes.NewBuffer([]byte(v.String()))
-	default:
-		formData := data.(url.Values)
-		body = strings.NewReader(formData.Encode())
+	if method == "post" {
+		switch v := reflect.ValueOf(data); v.Kind() {
+		case reflect.String:
+			body = bytes.NewBuffer([]byte(v.String()))
+		default:
+			formData := data.(url.Values)
+			body = strings.NewReader(formData.Encode())
+		}
 	}
 
-	req, _ := http.NewRequest("POST", urlString, body)
+	var req *http.Request
+	if method == "post" {
+		req, _ = http.NewRequest("POST", urlString, body)
+	} else {
+		req, _ = http.NewRequest("GET", urlString, nil)
+	}
+
 	switch v := reflect.ValueOf(data); v.Kind() {
 	case reflect.String:
 		req.Header.Set("Content-Type", "application/xml; charset=utf-8")
@@ -81,7 +91,7 @@ func createUser(email string, password string) *httptest.ResponseRecorder {
 		"channel_id": {email},
 	}
 
-	w := post("/signup", data, nil, "")
+	w := testReq("post", "/signup", data, nil, "")
 
 	if w.Code != 200 {
 		panic("createUser Fail")
