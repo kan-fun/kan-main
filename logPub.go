@@ -48,7 +48,7 @@ func logPub(c *gin.Context) {
 	}
 
 	logType, err := strconv.Atoi(string(logTypeBytes))
-	if err == nil {
+	if err != nil {
 		log.Println(err)
 		return
 	}
