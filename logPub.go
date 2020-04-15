@@ -88,6 +88,10 @@ func logPub(c *gin.Context) {
 				// Todo: do sth if user want to get notify when websocket disconnect abnormal
 				db.Model(&task).Update("status", 3)
 
+				log.Println(task.Topic)
+				log.Println("close error: ")
+				log.Println(err.Error())
+
 				err = serviceGlobal.weChatNotify("oOCN8xCIjo5QXoDXokJO6Knib618", task.Topic, false)
 				if err != nil {
 					log.Println(err)
