@@ -3,12 +3,19 @@ package main
 import (
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 
 	"github.com/kan-fun/kan-server-core/model"
 )
+
+// Time allowed to read the next pong message from the peer.
+const pongWait = 290 * time.Second
+
+// Send pings to peer with this period. Must be less than pongWait.
+const pingPeriod = 280 * time.Second
 
 func reverse(s string) string {
 	r := []rune(s)
@@ -34,6 +41,9 @@ func logPub(c *gin.Context) {
 		return
 	}
 	defer conn.Close()
+
+	conn.SetReadDeadline(time.Now().Add(pongWait))
+	conn.SetPongHandler(func(string) error { conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 
 	_, topic, err := conn.ReadMessage()
 	if err != nil {
@@ -87,10 +97,6 @@ func logPub(c *gin.Context) {
 			} else {
 				// Todo: do sth if user want to get notify when websocket disconnect abnormal
 				db.Model(&task).Update("status", 3)
-
-				log.Println(task.Topic)
-				log.Println("close error: ")
-				log.Println(err.Error())
 
 				err = serviceGlobal.weChatNotify("oOCN8xCIjo5QXoDXokJO6Knib618", task.Topic, false)
 				if err != nil {
