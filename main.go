@@ -191,12 +191,12 @@ func main() {
 
 	setMPAccessToken()
 
-	timer := time.NewTimer(100 * time.Minute)
-	defer timer.Stop()
+	ticker := time.NewTicker(100 * time.Minute)
+	defer ticker.Stop()
 
 	go func() {
 		for {
-			<-timer.C
+			<-ticker.C
 			setMPAccessToken()
 		}
 	}()
