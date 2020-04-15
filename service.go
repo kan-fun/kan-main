@@ -259,6 +259,11 @@ const contentTpl = `{
 const goodTplID = "F7KKMDk5Cm61PU8XJNAXGEWWFf3UBhEq1F5tsYeMygU"
 const badTplID = "3AG4C6YUJBfZ6pt1jwAhzaRd_biqT0vQj9iHmEPgnKc"
 
+type weChatSendMessageRespStruct struct {
+	ErrCode uint32 `json:"errcode"`
+	ErrMsg  string `json:"errmsg"`
+}
+
 func (s realService) weChatNotify(openID string, topic string, isSuccessful bool) (err error) {
 	var tplID string
 
@@ -283,6 +288,25 @@ func (s realService) weChatNotify(openID string, topic string, isSuccessful bool
 		return
 	}
 	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	var wechatResp weChatSendMessageRespStruct
+	err = json.Unmarshal(body, &wechatResp)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	if wechatResp.ErrCode != 0 {
+		err = errors.New("Fail to send Message")
+		log.Println(wechatResp.ErrMsg)
+		return
+	}
 
 	return
 }
