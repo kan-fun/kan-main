@@ -179,6 +179,9 @@ func setMPAccessToken() {
 		log.Println(err)
 	}
 
+	log.Println("setMPAccessToken")
+	log.Println(accessToken)
+
 	mpAccessToken = accessToken
 }
 
