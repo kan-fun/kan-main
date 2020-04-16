@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
@@ -20,10 +21,12 @@ type service interface {
 	email(address string, subject string, body string) error
 	sms(number string, code string) error
 	bin(platform string) ([]string, error)
-	logPut(reversedID string, content string) error
 	logGetToEnd(reversedID string, fromHead bool, lastAutoID int64) ([]string, int64, error)
 	weChatGetAccessToken() (string, error)
 	weChatNotify(openID string, topic string, isSuccessful bool) error
+	newTask(reversedUserID string, topic string, _type int) (taskID *string, err error)
+	updateTaskStatus(reversedUserID string, taskID string, status int) (err error)
+	newLog(reversedTaskID string, content string) error
 }
 
 type realService struct {
@@ -120,30 +123,6 @@ func (s realService) bin(platform string) (result []string, err error) {
 }
 
 func (s mockService) bin(platform string) (result []string, err error) {
-	return
-}
-
-func (s realService) logPut(reversedID string, content string) (err error) {
-	putRowRequest := new(tablestore.PutRowRequest)
-	putRowChange := new(tablestore.PutRowChange)
-	putRowChange.TableName = "log"
-
-	putPk := new(tablestore.PrimaryKey)
-	putPk.AddPrimaryKeyColumn("reversed_id", reversedID)
-	putPk.AddPrimaryKeyColumnWithAutoIncrement("auto_id")
-	putRowChange.PrimaryKey = putPk
-
-	putRowChange.AddColumn("content", content)
-
-	putRowChange.SetCondition(tablestore.RowExistenceExpectation_IGNORE)
-	putRowRequest.PutRowChange = putRowChange
-
-	_, err = tableStoreClientGlobal.PutRow(putRowRequest)
-
-	return
-}
-
-func (s mockService) logPut(reversedID string, content string) (err error) {
 	return
 }
 
@@ -312,5 +291,96 @@ func (s realService) weChatNotify(openID string, topic string, isSuccessful bool
 }
 
 func (s mockService) weChatNotify(openID string, topic string, isSuccessful bool) (err error) {
+	return
+}
+
+func (s realService) newTask(reversedUserID string, topic string, _type uint8) (taskID *string, err error) {
+	putRowRequest := new(tablestore.PutRowRequest)
+	putRowChange := new(tablestore.PutRowChange)
+	putRowChange.TableName = "task"
+
+	putPk := new(tablestore.PrimaryKey)
+	putPk.AddPrimaryKeyColumn("reversed_user_id", reversedUserID)
+	putPk.AddPrimaryKeyColumnWithAutoIncrement("task_id")
+	putRowChange.PrimaryKey = putPk
+
+	now := string(time.Now().Unix())
+
+	putRowChange.AddColumn("topic", topic)
+	putRowChange.AddColumn("created_at", now)
+	putRowChange.AddColumn("updated_at", now)
+	putRowChange.AddColumn("status", 0)
+	putRowChange.AddColumn("type", _type)
+
+	putRowChange.SetCondition(tablestore.RowExistenceExpectation_IGNORE)
+	putRowRequest.PutRowChange = putRowChange
+
+	putRowResponse, err := tableStoreClientGlobal.PutRow(putRowRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	taskIDString := string(putRowResponse.PrimaryKey.PrimaryKeys[1].Value.(int64))
+	taskID = &taskIDString
+
+	return
+}
+
+func (s mockService) newTask(reversedUserID string, topic string, _type uint8) (taskID *string, err error) {
+	return
+}
+
+func (s realService) newLog(reversedTaskID string, content string) (err error) {
+	putRowRequest := new(tablestore.PutRowRequest)
+	putRowChange := new(tablestore.PutRowChange)
+	putRowChange.TableName = "log"
+
+	putPk := new(tablestore.PrimaryKey)
+	putPk.AddPrimaryKeyColumn("reversed_task_id", reversedTaskID)
+	putPk.AddPrimaryKeyColumnWithAutoIncrement("log_id")
+	putRowChange.PrimaryKey = putPk
+
+	now := string(time.Now().Unix())
+	putRowChange.AddColumn("content", content)
+	putRowChange.AddColumn("created_at", now)
+
+	putRowChange.SetCondition(tablestore.RowExistenceExpectation_IGNORE)
+	putRowRequest.PutRowChange = putRowChange
+
+	_, err = tableStoreClientGlobal.PutRow(putRowRequest)
+
+	return
+}
+
+func (s mockService) newLog(reversedTaskID string, content string) (err error) {
+	return
+}
+
+func (s realService) updateTaskStatus(reversedUserID string, taskID string, status int) (err error) {
+	updateRowRequest := new(tablestore.UpdateRowRequest)
+	updateRowChange := new(tablestore.UpdateRowChange)
+	updateRowChange.TableName = "task"
+
+	updatePk := new(tablestore.PrimaryKey)
+	updatePk.AddPrimaryKeyColumn("reversed_user_id", reversedUserID)
+	updatePk.AddPrimaryKeyColumn("task_id", taskID)
+	updateRowChange.PrimaryKey = updatePk
+
+	now := string(time.Now().Unix())
+	updateRowChange.PutColumn("updated_at", now)
+	updateRowChange.PutColumn("status", status)
+
+	updateRowChange.SetCondition(tablestore.RowExistenceExpectation_IGNORE)
+	updateRowRequest.UpdateRowChange = updateRowChange
+
+	_, err = tableStoreClientGlobal.UpdateRow(updateRowRequest)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (s mockService) updateTaskStatus(reversedUserID string, taskID string, status int) (err error) {
 	return
 }

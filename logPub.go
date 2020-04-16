@@ -7,8 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-
-	"github.com/kan-fun/kan-server-core/model"
 )
 
 // Time allowed to write a message to the peer.
@@ -69,62 +67,69 @@ func logPub(c *gin.Context) {
 
 	go sendPing(quit, conn)
 
-	_, topic, err := conn.ReadMessage()
+	_, topicBytes, err := conn.ReadMessage()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	topic := string(topicBytes)
+
+	_, taskTypeBytes, err := conn.ReadMessage()
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	_, logTypeBytes, err := conn.ReadMessage()
+	taskType, err := strconv.Atoi(string(taskTypeBytes))
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	logType, err := strconv.Atoi(string(logTypeBytes))
+	reversedUserID := reverse(string(user.ID))
+
+	taskID, err := serviceGlobal.newTask(reversedUserID, topic, taskType)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	task := &model.Task{
-		UserID: user.ID,
-		Topic:  string(topic),
-		Type:   uint8(logType),
-	}
-
-	if err := db.Create(task).Error; err != nil {
-		log.Println(err)
-		return
-	}
-
-	reversedID := reverse(strconv.FormatUint(uint64(task.ID), 10))
+	reversedTaskID := reverse(*taskID)
 
 	for {
 		_, contentBytes, err := conn.ReadMessage()
 		if err != nil {
 			if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
-				db.Model(&task).Update("status", 1)
+				err = serviceGlobal.updateTaskStatus(reversedUserID, *taskID, 1)
+				if err != nil {
+					log.Println(err)
+				}
 
-				err = serviceGlobal.weChatNotify("oOCN8xCIjo5QXoDXokJO6Knib618", task.Topic, true)
+				err = serviceGlobal.weChatNotify("oOCN8xCIjo5QXoDXokJO6Knib618", topic, true)
 				if err != nil {
 					log.Println(err)
 				}
 			} else if websocket.IsCloseError(err, 4000) {
 				// Todo: do sth if user want to get notify when exit code not 0
-				db.Model(&task).Update("status", 2)
+				err = serviceGlobal.updateTaskStatus(reversedUserID, *taskID, 2)
+				if err != nil {
+					log.Println(err)
+				}
 
-				err = serviceGlobal.weChatNotify("oOCN8xCIjo5QXoDXokJO6Knib618", task.Topic, false)
+				err = serviceGlobal.weChatNotify("oOCN8xCIjo5QXoDXokJO6Knib618", topic, false)
 				if err != nil {
 					log.Println(err)
 				}
 			} else {
 				// Todo: do sth if user want to get notify when websocket disconnect abnormal
-				db.Model(&task).Update("status", 3)
+				err = serviceGlobal.updateTaskStatus(reversedUserID, *taskID, 3)
+				if err != nil {
+					log.Println(err)
+				}
 
 				log.Println(err.Error())
 
-				err = serviceGlobal.weChatNotify("oOCN8xCIjo5QXoDXokJO6Knib618", task.Topic, false)
+				err = serviceGlobal.weChatNotify("oOCN8xCIjo5QXoDXokJO6Knib618", topic, false)
 				if err != nil {
 					log.Println(err)
 				}
@@ -135,7 +140,7 @@ func logPub(c *gin.Context) {
 
 		content := string(contentBytes)
 
-		if err := serviceGlobal.logPut(reversedID, content); err != nil {
+		if err := serviceGlobal.newLog(reversedTaskID, content); err != nil {
 			log.Println(err)
 		}
 	}
