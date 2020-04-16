@@ -11,11 +11,14 @@ import (
 	"github.com/kan-fun/kan-server-core/model"
 )
 
+// Time allowed to write a message to the peer.
+const writeWait = 10 * time.Second
+
 // Time allowed to read the next pong message from the peer.
 const pongWait = 290 * time.Second
 
 // Send pings to peer with this period. Must be less than pongWait.
-const pingPeriod = 280 * time.Second
+const pingPeriod = 260 * time.Second
 
 func reverse(s string) string {
 	r := []rune(s)
@@ -25,11 +28,14 @@ func reverse(s string) string {
 	return string(r)
 }
 
-func sendPing(ticker *time.Ticker, quit chan struct{}, conn *websocket.Conn) {
+func sendPing(quit chan struct{}, conn *websocket.Conn) {
+	ticker := time.NewTicker(pingPeriod)
+	defer ticker.Stop()
+
 	for {
 		select {
 		case <-ticker.C:
-			if err := conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+			if err := conn.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(writeWait)); err != nil {
 				log.Println(err)
 			}
 		case <-quit:
@@ -58,13 +64,10 @@ func logPub(c *gin.Context) {
 	conn.SetReadDeadline(time.Now().Add(pongWait))
 	conn.SetPongHandler(func(string) error { conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 
-	pingTicker := time.NewTicker(pingPeriod)
-	defer pingTicker.Stop()
-
 	quit := make(chan struct{})
 	defer close(quit)
 
-	go sendPing(pingTicker, quit, conn)
+	go sendPing(quit, conn)
 
 	_, topic, err := conn.ReadMessage()
 	if err != nil {
