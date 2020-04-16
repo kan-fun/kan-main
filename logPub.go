@@ -25,6 +25,19 @@ func reverse(s string) string {
 	return string(r)
 }
 
+func sendPing(ticker *time.Ticker, quit chan struct{}, conn *websocket.Conn) {
+	for {
+		select {
+		case <-ticker.C:
+			if err := conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+				log.Println(err)
+			}
+		case <-quit:
+			return
+		}
+	}
+}
+
 var pubUpgrader = websocket.Upgrader{}
 
 func logPub(c *gin.Context) {
@@ -44,6 +57,14 @@ func logPub(c *gin.Context) {
 
 	conn.SetReadDeadline(time.Now().Add(pongWait))
 	conn.SetPongHandler(func(string) error { conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+
+	pingTicker := time.NewTicker(pingPeriod)
+	defer pingTicker.Stop()
+
+	quit := make(chan struct{})
+	defer close(quit)
+
+	go sendPing(pingTicker, quit, conn)
 
 	_, topic, err := conn.ReadMessage()
 	if err != nil {
