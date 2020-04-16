@@ -25,8 +25,8 @@ type service interface {
 	logGetToEnd(reversedID string, fromHead bool, lastAutoID int64) ([]string, int64, error)
 	weChatGetAccessToken() (string, error)
 	weChatNotify(openID string, topic string, isSuccessful bool) error
-	newTask(reversedUserID string, topic string, _type int) (taskID *string, err error)
-	updateTaskStatus(reversedUserID string, taskID string, status int) (err error)
+	newTask(reversedUserID string, topic string, _type int) (taskID int64, err error)
+	updateTaskStatus(reversedUserID string, taskID int64, status int) (err error)
 	newLog(reversedTaskID string, content string) error
 }
 
@@ -295,7 +295,7 @@ func (s mockService) weChatNotify(openID string, topic string, isSuccessful bool
 	return
 }
 
-func (s realService) newTask(reversedUserID string, topic string, _type int) (taskID *string, err error) {
+func (s realService) newTask(reversedUserID string, topic string, _type int) (taskID int64, err error) {
 	putRowRequest := new(tablestore.PutRowRequest)
 	putRowChange := new(tablestore.PutRowChange)
 	putRowChange.TableName = "task"
@@ -319,16 +319,15 @@ func (s realService) newTask(reversedUserID string, topic string, _type int) (ta
 
 	putRowResponse, err := tableStoreClientGlobal.PutRow(putRowRequest)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 
-	taskIDString := strconv.FormatInt(putRowResponse.PrimaryKey.PrimaryKeys[1].Value.(int64), 10)
-	taskID = &taskIDString
+	taskID = putRowResponse.PrimaryKey.PrimaryKeys[1].Value.(int64)
 
 	return
 }
 
-func (s mockService) newTask(reversedUserID string, topic string, _type int) (taskID *string, err error) {
+func (s mockService) newTask(reversedUserID string, topic string, _type int) (taskID int64, err error) {
 	return
 }
 
@@ -358,7 +357,7 @@ func (s mockService) newLog(reversedTaskID string, content string) (err error) {
 	return
 }
 
-func (s realService) updateTaskStatus(reversedUserID string, taskID string, status int) (err error) {
+func (s realService) updateTaskStatus(reversedUserID string, taskID int64, status int) (err error) {
 	updateRowRequest := new(tablestore.UpdateRowRequest)
 	updateRowChange := new(tablestore.UpdateRowChange)
 	updateRowChange.TableName = "task"
@@ -383,6 +382,6 @@ func (s realService) updateTaskStatus(reversedUserID string, taskID string, stat
 	return
 }
 
-func (s mockService) updateTaskStatus(reversedUserID string, taskID string, status int) (err error) {
+func (s mockService) updateTaskStatus(reversedUserID string, taskID int64, status int) (err error) {
 	return
 }

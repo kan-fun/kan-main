@@ -94,13 +94,13 @@ func logPub(c *gin.Context) {
 		return
 	}
 
-	reversedTaskID := reverse(*taskID)
+	reversedTaskID := reverse(strconv.FormatInt(taskID, 10))
 
 	for {
 		_, contentBytes, err := conn.ReadMessage()
 		if err != nil {
 			if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
-				err = serviceGlobal.updateTaskStatus(reversedUserID, *taskID, 1)
+				err = serviceGlobal.updateTaskStatus(reversedUserID, taskID, 1)
 				if err != nil {
 					log.Println(err)
 				}
@@ -111,7 +111,7 @@ func logPub(c *gin.Context) {
 				}
 			} else if websocket.IsCloseError(err, 4000) {
 				// Todo: do sth if user want to get notify when exit code not 0
-				err = serviceGlobal.updateTaskStatus(reversedUserID, *taskID, 2)
+				err = serviceGlobal.updateTaskStatus(reversedUserID, taskID, 2)
 				if err != nil {
 					log.Println(err)
 				}
@@ -122,7 +122,7 @@ func logPub(c *gin.Context) {
 				}
 			} else {
 				// Todo: do sth if user want to get notify when websocket disconnect abnormal
-				err = serviceGlobal.updateTaskStatus(reversedUserID, *taskID, 3)
+				err = serviceGlobal.updateTaskStatus(reversedUserID, taskID, 3)
 				if err != nil {
 					log.Println(err)
 				}
