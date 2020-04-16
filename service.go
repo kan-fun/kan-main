@@ -314,6 +314,7 @@ func (s realService) newTask(reversedUserID string, topic string, _type int) (ta
 	putRowChange.AddColumn("type", int64(_type))
 
 	putRowChange.SetCondition(tablestore.RowExistenceExpectation_IGNORE)
+	putRowChange.SetReturnPk()
 	putRowRequest.PutRowChange = putRowChange
 
 	putRowResponse, err := tableStoreClientGlobal.PutRow(putRowRequest)
@@ -321,7 +322,7 @@ func (s realService) newTask(reversedUserID string, topic string, _type int) (ta
 		return nil, err
 	}
 
-	taskIDString := string(putRowResponse.PrimaryKey.PrimaryKeys[1].Value.(int64))
+	taskIDString := strconv.FormatInt(putRowResponse.PrimaryKey.PrimaryKeys[1].Value.(int64), 10)
 	taskID = &taskIDString
 
 	return
