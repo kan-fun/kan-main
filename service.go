@@ -294,7 +294,7 @@ func (s mockService) weChatNotify(openID string, topic string, isSuccessful bool
 	return
 }
 
-func (s realService) newTask(reversedUserID string, topic string, _type uint8) (taskID *string, err error) {
+func (s realService) newTask(reversedUserID string, topic string, _type int) (taskID *string, err error) {
 	putRowRequest := new(tablestore.PutRowRequest)
 	putRowChange := new(tablestore.PutRowChange)
 	putRowChange.TableName = "task"
@@ -326,7 +326,7 @@ func (s realService) newTask(reversedUserID string, topic string, _type uint8) (
 	return
 }
 
-func (s mockService) newTask(reversedUserID string, topic string, _type uint8) (taskID *string, err error) {
+func (s mockService) newTask(reversedUserID string, topic string, _type int) (taskID *string, err error) {
 	return
 }
 
