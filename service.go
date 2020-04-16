@@ -309,8 +309,8 @@ func (s realService) newTask(reversedUserID string, topic string, _type int) (ta
 	putRowChange.AddColumn("topic", topic)
 	putRowChange.AddColumn("created_at", now)
 	putRowChange.AddColumn("updated_at", now)
-	putRowChange.AddColumn("status", 0)
-	putRowChange.AddColumn("type", _type)
+	putRowChange.AddColumn("status", int64(0))
+	putRowChange.AddColumn("type", int64(_type))
 
 	putRowChange.SetCondition(tablestore.RowExistenceExpectation_IGNORE)
 	putRowRequest.PutRowChange = putRowChange
@@ -368,7 +368,7 @@ func (s realService) updateTaskStatus(reversedUserID string, taskID string, stat
 
 	now := string(time.Now().Unix())
 	updateRowChange.PutColumn("updated_at", now)
-	updateRowChange.PutColumn("status", status)
+	updateRowChange.PutColumn("status", int64(status))
 
 	updateRowChange.SetCondition(tablestore.RowExistenceExpectation_IGNORE)
 	updateRowRequest.UpdateRowChange = updateRowChange
