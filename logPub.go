@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -86,7 +87,7 @@ func logPub(c *gin.Context) {
 		return
 	}
 
-	reversedUserID := reverse(string(user.ID))
+	reversedUserID := reverse(fmt.Sprint(user.ID))
 
 	taskID, err := serviceGlobal.newTask(reversedUserID, topic, taskType)
 	if err != nil {
