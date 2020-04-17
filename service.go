@@ -1,12 +1,14 @@
 package main
 
 import (
+	"crypto/md5"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -26,7 +28,7 @@ type service interface {
 	weChatNotify(openID string, topic string, isSuccessful bool) error
 	newTask(reversedUserID string, topic string, _type int) (taskID int64, err error)
 	updateTaskStatus(reversedUserID string, taskID int64, status int) (err error)
-	newLog(reversedTaskID string, content string) error
+	newLog(taskID int64, content string) error
 }
 
 type realService struct {
@@ -330,13 +332,16 @@ func (s mockService) newTask(reversedUserID string, topic string, _type int) (ta
 	return
 }
 
-func (s realService) newLog(reversedTaskID string, content string) (err error) {
+func (s realService) newLog(taskID int64, content string) (err error) {
 	putRowRequest := new(tablestore.PutRowRequest)
 	putRowChange := new(tablestore.PutRowChange)
 	putRowChange.TableName = "log"
 
 	putPk := new(tablestore.PrimaryKey)
-	putPk.AddPrimaryKeyColumn("reversed_task_id", reversedTaskID)
+
+	data := md5.Sum([]byte(strconv.FormatInt(taskID, 10)))
+	putPk.AddPrimaryKeyColumn("hash_task_id", fmt.Sprintf("%x", data[:6]))
+	putPk.AddPrimaryKeyColumn("task_id", taskID)
 	putPk.AddPrimaryKeyColumnWithAutoIncrement("log_id")
 	putRowChange.PrimaryKey = putPk
 
@@ -352,7 +357,7 @@ func (s realService) newLog(reversedTaskID string, content string) (err error) {
 	return
 }
 
-func (s mockService) newLog(reversedTaskID string, content string) (err error) {
+func (s mockService) newLog(taskID int64, content string) (err error) {
 	return
 }
 
