@@ -141,7 +141,7 @@ func setup(test bool) {
 	clientGlobal = clientLocal
 
 	// Init OSS Client
-	ossClientLocal, err := oss.New("oss-cn-beijing.aliyuncs.com", aliyunAccessKey, aliyunSecretKey)
+	ossClientLocal, err := oss.New("oss-cn-beijing-internal.aliyuncs.com", aliyunAccessKey, aliyunSecretKey)
 	if err != nil {
 		panic(err)
 	}
@@ -149,7 +149,7 @@ func setup(test bool) {
 	ossClientGlobal = ossClientLocal
 
 	// Init TableStore Client
-	tableStoreClientLocal := tablestore.NewClient("https://kan.cn-beijing.ots.aliyuncs.com", "kan", aliyunAccessKey, aliyunSecretKey)
+	tableStoreClientLocal := tablestore.NewClient("https://kan.cn-beijing.vpc.tablestore.aliyuncs.com", "kan", aliyunAccessKey, aliyunSecretKey)
 	tableStoreClientGlobal = tableStoreClientLocal
 }
 
