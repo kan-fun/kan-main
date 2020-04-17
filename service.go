@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
@@ -305,7 +304,7 @@ func (s realService) newTask(reversedUserID string, topic string, _type int) (ta
 	putPk.AddPrimaryKeyColumnWithAutoIncrement("task_id")
 	putRowChange.PrimaryKey = putPk
 
-	now := strconv.FormatInt(time.Now().Unix(), 10)
+	now := time.Now().Unix()
 
 	putRowChange.AddColumn("topic", topic)
 	putRowChange.AddColumn("created_at", now)
@@ -341,7 +340,7 @@ func (s realService) newLog(reversedTaskID string, content string) (err error) {
 	putPk.AddPrimaryKeyColumnWithAutoIncrement("log_id")
 	putRowChange.PrimaryKey = putPk
 
-	now := strconv.FormatInt(time.Now().Unix(), 10)
+	now := time.Now().Unix()
 	putRowChange.AddColumn("content", content)
 	putRowChange.AddColumn("created_at", now)
 
@@ -367,7 +366,7 @@ func (s realService) updateTaskStatus(reversedUserID string, taskID int64, statu
 	updatePk.AddPrimaryKeyColumn("task_id", taskID)
 	updateRowChange.PrimaryKey = updatePk
 
-	now := strconv.FormatInt(time.Now().Unix(), 10)
+	now := time.Now().Unix()
 	updateRowChange.PutColumn("updated_at", now)
 	updateRowChange.PutColumn("status", int64(status))
 
