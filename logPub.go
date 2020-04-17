@@ -122,8 +122,7 @@ func logPub(c *gin.Context) {
 				}
 			} else {
 				// Todo: do sth if user want to get notify when websocket disconnect abnormal
-				err = serviceGlobal.updateTaskStatus(reversedUserID, taskID, 3)
-				if err != nil {
+				if err := serviceGlobal.updateTaskStatus(reversedUserID, taskID, 3); err != nil {
 					log.Println(err)
 				}
 
