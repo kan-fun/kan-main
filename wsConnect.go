@@ -65,7 +65,5 @@ func wsConnect(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"ticket": wechatResp.Ticket,
-	})
+	c.String(200, wechatResp.Ticket)
 }
