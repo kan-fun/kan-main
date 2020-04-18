@@ -113,6 +113,7 @@ func setup(test bool) {
 		sess, err := session.NewSession(&aws.Config{
 			Region:      aws.String("ap-northeast-1"),
 			Credentials: credentials.NewEnvCredentials(),
+			Endpoint:    aws.String("https://caom10deu0.execute-api.ap-northeast-1.amazonaws.com/prod"),
 		})
 		if err != nil {
 			panic(err)
