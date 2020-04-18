@@ -16,10 +16,13 @@ func wsConnect(c *gin.Context) {
 		}
 	}
 
-	bodyBytes, _ := ioutil.ReadAll(c.Request.Body)
+	bodyBytes, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Println(err)
+	}
 	bodyString := string(bodyBytes)
 	log.Println(bodyString)
-	c.JSON(502, gin.H{
+	c.JSON(400, gin.H{
 		"token": "token",
 	})
 }

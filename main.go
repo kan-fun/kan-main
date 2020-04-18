@@ -169,7 +169,7 @@ func setupRouter() *gin.Engine {
 	r.GET("/wechat", wechatGet)
 	r.POST("/wechat", wechatPost)
 	r.GET("/wechat-login", wechatLogin)
-	r.POST("/ws-connect", wsConnect)
+	r.POST("/ws-connect-t", wsConnect)
 
 	return r
 }
@@ -179,9 +179,6 @@ func setMPAccessToken() {
 	if err != nil {
 		log.Println(err)
 	}
-
-	log.Println("setMPAccessToken")
-	log.Println(accessToken)
 
 	mpAccessToken = accessToken
 }
