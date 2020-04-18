@@ -169,7 +169,7 @@ func setupRouter() *gin.Engine {
 	r.GET("/wechat", wechatGet)
 	r.POST("/wechat", wechatPost)
 	r.GET("/wechat-login", wechatLogin)
-	r.POST("/ws-connect-t", wsConnect)
+	r.POST("/ws-connect", wsConnect)
 
 	return r
 }
