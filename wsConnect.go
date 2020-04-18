@@ -66,7 +66,7 @@ func wsConnect(c *gin.Context) {
 		return
 	}
 
-	connectionID := c.GetHeader("Kan-Connectionid")
+	connectionID := c.Request.Header.Get("Kan-Connectionid")
 	if connectionID == "" {
 		c.String(403, "No Kan-Connectionid")
 		return
