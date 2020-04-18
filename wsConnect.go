@@ -20,6 +20,13 @@ type wechatQRRespStruct struct {
 }
 
 func wsConnect(c *gin.Context) {
+	for k, vals := range c.Request.Header {
+		log.Printf("%s", k)
+		for _, v := range vals {
+			log.Printf("\t%s", v)
+		}
+	}
+
 	id, ok := c.GetPostForm("id")
 	if !ok {
 		c.String(403, "No ID")
