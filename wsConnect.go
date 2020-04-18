@@ -20,23 +20,6 @@ type wechatQRRespStruct struct {
 }
 
 func wsConnect(c *gin.Context) {
-
-	for k, vals := range c.Request.Header {
-		log.Printf("%s", k)
-		for _, v := range vals {
-			log.Printf("\t%s", v)
-		}
-	}
-
-	body, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		log.Println(err)
-		c.String(403, "")
-		return
-	}
-	log.Println("------")
-	log.Println(string(body))
-
 	id, ok := c.GetPostForm("id")
 	if !ok {
 		c.String(403, "No ID")
@@ -61,7 +44,7 @@ func wsConnect(c *gin.Context) {
 	}
 	defer resp.Body.Close()
 
-	body, err = ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(err)
 		c.String(403, "")
