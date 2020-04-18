@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/aws/aws-sdk-go/service/apigatewaymanagementapi"
 	"github.com/gin-gonic/gin"
@@ -73,19 +72,15 @@ func wsConnect(c *gin.Context) {
 		return
 	}
 
-	go func() {
-		log.Println("Send Start")
-		time.Sleep(7 * time.Second)
-		output, err := awsAPIGateway.PostToConnection(&apigatewaymanagementapi.PostToConnectionInput{
-			ConnectionId: &connectionID,
-			Data:         []byte(wechatResp.Ticket),
-		})
+	output, err := awsAPIGateway.PostToConnection(&apigatewaymanagementapi.PostToConnectionInput{
+		ConnectionId: &connectionID,
+		Data:         []byte(wechatResp.Ticket),
+	})
 
-		if err != nil {
-			log.Println(err)
-			log.Println(output)
-		}
-		log.Println("Send End")
-	}()
+	if err != nil {
+		log.Println(err)
+		log.Println(output)
+	}
+
 	c.Status(200)
 }
