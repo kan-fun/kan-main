@@ -65,6 +65,5 @@ func wsConnect(c *gin.Context) {
 		return
 	}
 
-	// wechatResp.Ticket
-	c.String(200, "")
+	c.String(200, wechatResp.Ticket)
 }
