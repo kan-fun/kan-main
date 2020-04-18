@@ -53,7 +53,7 @@ func wsConnect(c *gin.Context) {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(err)
 		c.String(403, "")
