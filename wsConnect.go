@@ -20,6 +20,14 @@ type wechatQRRespStruct struct {
 }
 
 func wsConnect(c *gin.Context) {
+
+	for k, vals := range c.Request.Header {
+		log.Printf("%s", k)
+		for _, v := range vals {
+			log.Printf("\t%s", v)
+		}
+	}
+
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Println(err)
