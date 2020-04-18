@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/aws/aws-sdk-go/service/apigatewaymanagementapi"
 	"github.com/gin-gonic/gin"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/kan-fun/kan-server-core/model"
@@ -65,5 +66,21 @@ func wsConnect(c *gin.Context) {
 		return
 	}
 
-	c.String(200, wechatResp.Ticket)
+	connectionID := c.GetHeader("Kan-Connectionid")
+	if connectionID == "" {
+		c.String(403, "No Kan-Connectionid")
+		return
+	}
+
+	output, err := awsAPIGateway.PostToConnection(&apigatewaymanagementapi.PostToConnectionInput{
+		ConnectionId: &connectionID,
+		Data:         []byte(wechatResp.Ticket),
+	})
+
+	if err != nil {
+		log.Println(err)
+		log.Println(output)
+	}
+
+	c.Status(200)
 }

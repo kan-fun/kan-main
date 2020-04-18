@@ -15,4 +15,5 @@ require (
 	github.com/silenceper/wechat v1.2.3
 	github.com/stretchr/testify v1.5.1
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
+	github.com/aws/aws-sdk-go v1.30.9
 )

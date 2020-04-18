@@ -13,6 +13,10 @@ import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/aliyun/aliyun-tablestore-go-sdk/tablestore"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/apigatewaymanagementapi"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -28,6 +32,7 @@ var mpAccessToken string
 
 var db *gorm.DB
 
+var awsAPIGateway *apigatewaymanagementapi.ApiGatewayManagementApi
 var clientGlobal *sdk.Client
 var ossClientGlobal *oss.Client
 var tableStoreClientGlobal *tablestore.TableStoreClient
@@ -104,6 +109,17 @@ func setup(test bool) {
 			panic("KAN_MP_SECRET not set")
 		}
 		mpSECRET = mpSECRETLocal
+
+		sess, err := session.NewSession(&aws.Config{
+			Region:      aws.String("ap-northeast-1"),
+			Credentials: credentials.NewEnvCredentials(),
+		})
+		if err != nil {
+			panic(err)
+		}
+
+		awsAPIGatewayLocal := apigatewaymanagementapi.New(sess)
+		awsAPIGateway = awsAPIGatewayLocal
 	}
 
 	rand.Seed(time.Now().UnixNano())
