@@ -108,7 +108,7 @@ func generateIDToken(id string) (tokenString string, err error) {
 	claims := idClaims{
 		id,
 		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour).Unix(),
+			ExpiresAt: time.Now().AddDate(0, 1, 0).Unix(),
 			Issuer:    "kan-fun.com",
 		},
 	}
