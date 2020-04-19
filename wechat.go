@@ -1,8 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"encoding/xml"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"strings"
 
+	"github.com/aws/aws-sdk-go/service/apigatewaymanagementapi"
 	"github.com/silenceper/wechat/message"
 
 	"github.com/gin-gonic/gin"
@@ -37,4 +44,84 @@ func wechatPost(c *gin.Context) {
 	resp.SetMsgType("text")
 
 	c.XML(200, resp)
+}
+
+type weChatQRClientReqStruct struct {
+	ConnectionID string `json:"connectionId"`
+}
+
+func weChatQR(c *gin.Context) {
+	body, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Println(err)
+		c.String(403, "")
+		return
+	}
+
+	var clientReq weChatQRClientReqStruct
+	err = json.Unmarshal(body, &clientReq)
+	if err != nil {
+		log.Println(err)
+		c.String(403, "")
+		return
+	}
+
+	connectionID := clientReq.ConnectionID
+
+	if connectionID == "" {
+		log.Println(body)
+		c.String(403, "")
+		return
+	}
+
+	userID, err := serviceGlobal.connectionIDToUserID(connectionID)
+	if err != nil {
+		log.Println(err)
+		c.String(403, "Fail to get user id")
+		return
+	}
+
+	url := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=%s", mpAccessToken)
+
+	bodyString := fmt.Sprintf(`{"expire_seconds": 604800, "action_name": "QR_SCENE", "action_info": {"scene": {"scene_id": %d}}}`, userID)
+	resp, err := http.Post(url, "application/json", strings.NewReader(bodyString))
+	if err != nil {
+		log.Println(err)
+		c.String(403, "")
+		return
+	}
+	defer resp.Body.Close()
+
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err)
+		c.String(403, "")
+		return
+	}
+
+	var wechatResp wechatQRRespStruct
+	err = json.Unmarshal(body, &wechatResp)
+	if err != nil {
+		log.Println(err)
+		c.String(403, "")
+		return
+	}
+
+	if wechatResp.ExpireSeconds == 0 {
+		log.Println(body)
+		c.String(403, "")
+		return
+	}
+
+	output, err := awsAPIGateway.PostToConnection(&apigatewaymanagementapi.PostToConnectionInput{
+		ConnectionId: &connectionID,
+		Data:         []byte(wechatResp.Ticket),
+	})
+
+	if err != nil {
+		log.Println(err)
+		log.Println(output)
+	}
+
+	c.Status(200)
 }

@@ -29,6 +29,8 @@ type service interface {
 	newTask(reversedUserID string, topic string, _type int) (taskID int64, err error)
 	updateTaskStatus(reversedUserID string, taskID int64, status int) (err error)
 	newLog(taskID int64, content string) error
+	newWsSession(connectionID string, userID int64) (err error)
+	connectionIDToUserID(connectionID string) (userID int64, err error)
 }
 
 type realService struct {
@@ -387,5 +389,54 @@ func (s realService) updateTaskStatus(reversedUserID string, taskID int64, statu
 }
 
 func (s mockService) updateTaskStatus(reversedUserID string, taskID int64, status int) (err error) {
+	return
+}
+
+func (s realService) newWsSession(connectionID string, userID int64) (err error) {
+	putRowRequest := new(tablestore.PutRowRequest)
+	putRowChange := new(tablestore.PutRowChange)
+	putRowChange.TableName = "ws_session"
+
+	putPk := new(tablestore.PrimaryKey)
+
+	putPk.AddPrimaryKeyColumn("connection_id", connectionID)
+	putRowChange.PrimaryKey = putPk
+
+	putRowChange.AddColumn("user_id", userID)
+
+	putRowChange.SetCondition(tablestore.RowExistenceExpectation_IGNORE)
+	putRowRequest.PutRowChange = putRowChange
+
+	_, err = tableStoreClientGlobal.PutRow(putRowRequest)
+
+	return
+}
+
+func (s mockService) newWsSession(connectionID string, userID int64) (err error) {
+	return
+}
+
+func (s realService) connectionIDToUserID(connectionID string) (userID int64, err error) {
+	getRowRequest := new(tablestore.GetRowRequest)
+	criteria := new(tablestore.SingleRowQueryCriteria)
+
+	putPk := new(tablestore.PrimaryKey)
+	putPk.AddPrimaryKeyColumn("connection_id", connectionID)
+
+	criteria.PrimaryKey = putPk
+	getRowRequest.SingleRowQueryCriteria = criteria
+	getRowRequest.SingleRowQueryCriteria.TableName = "ws_session"
+	getRowRequest.SingleRowQueryCriteria.MaxVersion = 1
+	getResp, err := tableStoreClientGlobal.GetRow(getRowRequest)
+
+	if err != nil {
+		return
+	}
+
+	userID = getResp.Columns[0].Value.(int64)
+	return
+}
+
+func (s mockService) connectionIDToUserID(connectionID string) (userID int64, err error) {
 	return
 }
