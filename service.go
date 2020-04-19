@@ -452,8 +452,8 @@ func (s realService) UserIDToConnectionIDs(userID int64) (connectionIDs []string
 	startPK.AddPrimaryKeyColumnWithMinValue("connection_id")
 
 	endPK := new(tablestore.PrimaryKey)
-	startPK.AddPrimaryKeyColumn("user_id", userID)
-	startPK.AddPrimaryKeyColumnWithMaxValue("connection_id")
+	endPK.AddPrimaryKeyColumn("user_id", userID)
+	endPK.AddPrimaryKeyColumnWithMaxValue("connection_id")
 
 	rangeRowQueryCriteria.StartPrimaryKey = startPK
 	rangeRowQueryCriteria.EndPrimaryKey = endPK
