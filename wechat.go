@@ -41,11 +41,11 @@ func wechatPost(c *gin.Context) {
 			userIDString := req.EventKey[8:]
 			userID, err := strconv.ParseInt(userIDString, 10, 64)
 			if err != nil {
-				c.String(403, err.Error())
+				c.String(403, "")
 				return
 			}
 
-			connectionIDs, err := serviceGlobal.UserIDToConnectionIDs(userID)
+			connectionIDs, err := serviceGlobal.UserIDToConnectionIDs(reverse(fmt.Sprint(userID)))
 			for _, connectionID := range connectionIDs {
 				output, err := awsAPIGateway.PostToConnection(&apigatewaymanagementapi.PostToConnectionInput{
 					ConnectionId: &connectionID,
@@ -108,7 +108,7 @@ func weChatQR(c *gin.Context) {
 
 	url := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=%s", mpAccessToken)
 
-	bodyString := fmt.Sprintf(`{"expire_seconds": 604800, "action_name": "QR_SCENE", "action_info": {"scene": {"scene_id": %d}}}`, userID)
+	bodyString := fmt.Sprintf(`{"expire_seconds": 1592000, "action_name": "QR_SCENE", "action_info": {"scene": {"scene_id": %d}}}`, userID)
 	resp, err := http.Post(url, "application/json", strings.NewReader(bodyString))
 	if err != nil {
 		log.Println(err)

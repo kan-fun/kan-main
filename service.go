@@ -31,7 +31,7 @@ type service interface {
 	newLog(taskID int64, content string) error
 	newWsSession(connectionID string, userID int64) (err error)
 	connectionIDToUserID(connectionID string) (userID int64, err error)
-	UserIDToConnectionIDs(userID int64) (connectionIDs []string, err error)
+	UserIDToConnectionIDs(reversedUserID string) (connectionIDs []string, err error)
 }
 
 type realService struct {
@@ -393,7 +393,7 @@ func (s mockService) updateTaskStatus(reversedUserID string, taskID int64, statu
 	return
 }
 
-func (s realService) newWsSession(connectionID string, userID int64) (err error) {
+func putWsSession(connectionID string, userID int64) (err error) {
 	putRowRequest := new(tablestore.PutRowRequest)
 	putRowChange := new(tablestore.PutRowChange)
 	putRowChange.TableName = "ws_session"
@@ -409,6 +409,36 @@ func (s realService) newWsSession(connectionID string, userID int64) (err error)
 	putRowRequest.PutRowChange = putRowChange
 
 	_, err = tableStoreClientGlobal.PutRow(putRowRequest)
+
+	return
+}
+
+func putWsSessionIndex(connectionID string, userID int64) (err error) {
+	putRowRequest := new(tablestore.PutRowRequest)
+	putRowChange := new(tablestore.PutRowChange)
+	putRowChange.TableName = "ws_session_index"
+
+	putPk := new(tablestore.PrimaryKey)
+	putPk.AddPrimaryKeyColumn("reversed_user_id", reverse(fmt.Sprint(userID)))
+	putPk.AddPrimaryKeyColumn("connection_id", connectionID)
+
+	putRowChange.PrimaryKey = putPk
+
+	putRowChange.SetCondition(tablestore.RowExistenceExpectation_IGNORE)
+	putRowRequest.PutRowChange = putRowChange
+
+	_, err = tableStoreClientGlobal.PutRow(putRowRequest)
+
+	return
+}
+
+func (s realService) newWsSession(connectionID string, userID int64) (err error) {
+	err = putWsSession(connectionID, userID)
+	if err != nil {
+		return
+	}
+
+	err = putWsSessionIndex(connectionID, userID)
 
 	return
 }
@@ -442,17 +472,17 @@ func (s mockService) connectionIDToUserID(connectionID string) (userID int64, er
 	return
 }
 
-func (s realService) UserIDToConnectionIDs(userID int64) (connectionIDs []string, err error) {
+func (s realService) UserIDToConnectionIDs(reversedUserID string) (connectionIDs []string, err error) {
 	getRangeRequest := &tablestore.GetRangeRequest{}
 	rangeRowQueryCriteria := &tablestore.RangeRowQueryCriteria{}
 	rangeRowQueryCriteria.TableName = "ws_session_index"
 
 	startPK := new(tablestore.PrimaryKey)
-	startPK.AddPrimaryKeyColumn("user_id", userID)
+	startPK.AddPrimaryKeyColumn("reversed_user_id", reversedUserID)
 	startPK.AddPrimaryKeyColumnWithMinValue("connection_id")
 
 	endPK := new(tablestore.PrimaryKey)
-	endPK.AddPrimaryKeyColumn("user_id", userID)
+	endPK.AddPrimaryKeyColumn("reversed_user_id", reversedUserID)
 	endPK.AddPrimaryKeyColumnWithMaxValue("connection_id")
 
 	rangeRowQueryCriteria.StartPrimaryKey = startPK
@@ -484,6 +514,6 @@ func (s realService) UserIDToConnectionIDs(userID int64) (connectionIDs []string
 	return
 }
 
-func (s mockService) UserIDToConnectionIDs(userID int64) (connectionIDs []string, err error) {
+func (s mockService) UserIDToConnectionIDs(reversedUserID string) (connectionIDs []string, err error) {
 	return
 }
