@@ -31,6 +31,7 @@ type service interface {
 	newLog(taskID int64, content string) error
 	newWsSession(connectionID string, userID int64) (err error)
 	connectionIDToUserID(connectionID string) (userID int64, err error)
+	UserIDToConnectionIDs(userID int64) (connectionIDs []string, err error)
 }
 
 type realService struct {
@@ -438,5 +439,51 @@ func (s realService) connectionIDToUserID(connectionID string) (userID int64, er
 }
 
 func (s mockService) connectionIDToUserID(connectionID string) (userID int64, err error) {
+	return
+}
+
+func (s realService) UserIDToConnectionIDs(userID int64) (connectionIDs []string, err error) {
+	getRangeRequest := &tablestore.GetRangeRequest{}
+	rangeRowQueryCriteria := &tablestore.RangeRowQueryCriteria{}
+	rangeRowQueryCriteria.TableName = "ws_session_index"
+
+	startPK := new(tablestore.PrimaryKey)
+	startPK.AddPrimaryKeyColumn("user_id", userID)
+	startPK.AddPrimaryKeyColumnWithMinValue("connection_id")
+
+	endPK := new(tablestore.PrimaryKey)
+	startPK.AddPrimaryKeyColumn("user_id", userID)
+	startPK.AddPrimaryKeyColumnWithMaxValue("connection_id")
+
+	rangeRowQueryCriteria.StartPrimaryKey = startPK
+	rangeRowQueryCriteria.EndPrimaryKey = endPK
+	rangeRowQueryCriteria.Direction = tablestore.FORWARD
+	rangeRowQueryCriteria.MaxVersion = 1
+	rangeRowQueryCriteria.Limit = 10
+	getRangeRequest.RangeRowQueryCriteria = rangeRowQueryCriteria
+
+	getRangeResp, err := tableStoreClientGlobal.GetRange(getRangeRequest)
+
+	for {
+		if err != nil {
+			return
+		}
+
+		for _, row := range getRangeResp.Rows {
+			connectionIDs = append(connectionIDs, row.PrimaryKey.PrimaryKeys[1].Value.(string))
+		}
+
+		if getRangeResp.NextStartPrimaryKey == nil {
+			break
+		} else {
+			getRangeRequest.RangeRowQueryCriteria.StartPrimaryKey = getRangeResp.NextStartPrimaryKey
+			getRangeResp, err = tableStoreClientGlobal.GetRange(getRangeRequest)
+		}
+	}
+
+	return
+}
+
+func (s mockService) UserIDToConnectionIDs(userID int64) (connectionIDs []string, err error) {
 	return
 }

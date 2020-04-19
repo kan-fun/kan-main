@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/service/apigatewaymanagementapi"
@@ -35,9 +36,33 @@ func wechatPost(c *gin.Context) {
 		return
 	}
 
-	resp := message.NewText(`
-	<a href="https://www.kan-fun.com/">kan</a>
-	`)
+	if req.MsgType == "event" {
+		if req.Event == "subscribe" {
+			userIDString := req.EventKey[8:]
+			userID, err := strconv.ParseInt(userIDString, 10, 64)
+			if err != nil {
+				c.String(403, err.Error())
+				return
+			}
+
+			connectionIDs, err := serviceGlobal.UserIDToConnectionIDs(userID)
+			for _, connectionID := range connectionIDs {
+				output, err := awsAPIGateway.PostToConnection(&apigatewaymanagementapi.PostToConnectionInput{
+					ConnectionId: &connectionID,
+					Data:         []byte("subscribe"),
+				})
+
+				if err != nil {
+					log.Println(err)
+					log.Println(output)
+				}
+			}
+		}
+		c.Status(200)
+		return
+	}
+
+	resp := message.NewText(`<a href="https://www.kan-fun.com/">kan</a>`)
 	resp.SetToUserName(req.FromUserName)
 	resp.SetFromUserName(req.ToUserName)
 	resp.SetCreateTime(req.CreateTime)
